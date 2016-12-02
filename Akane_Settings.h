@@ -1,6 +1,8 @@
 #ifndef _AKANE_SETTINGSH_
 #define _AKANE_SETTINGSH_
 
+#include <Arduino.h>
+
 #define ESP8266_PORT 80
 
 #define SERIAL_SPEED 115200
@@ -18,6 +20,14 @@
 #define RELAY_HUM 0
 #define RELAY_WAT 0
 
+// SCREEN
+#define TFT_DC 5
+#define TFT_CS 4
+#define TFT_ROTATE 2 // 1 Horizontal (pins on right) / 3 Horizontal (pins on left)
+
+// SERIAL
+#define SERIAL_BAUD_RATE 9600
+
 class Akane_Settings {
   public:
     char* ssid;
@@ -30,7 +40,7 @@ class Akane_Settings {
     float hum_commands[];
   public:
     Akane_Settings();
-    Akane_Settings(char* pssid, char* pssid_pwd);
+    Akane_Settings(const char* pssid, const char* pssid_pwd);
 
     void load();
     void save();

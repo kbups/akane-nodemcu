@@ -18,7 +18,7 @@ class Akane_Controller {
     void initialize();
     void execute();
     
-    IPAddress getLocalIP();
+    String getLocalIP();
 
   private:
     void connect();

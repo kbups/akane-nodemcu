@@ -25,10 +25,10 @@ void Akane_Controller::execute() {
   
 }
 
-IPAddress Akane_Controller::getLocalIP() {
+String Akane_Controller::getLocalIP() {
   if(WiFi.status() == WL_CONNECTED) {
-    return WiFi.localIP();
+    return WiFi.localIP().toString();
   }
-  return nullptr;
+  return "0.0.0.0";
 }
 
