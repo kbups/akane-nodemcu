@@ -8,6 +8,9 @@ Akane_Screen::Akane_Screen() {
 void Akane_Screen::initialize() { 
   tft->begin();
   tft->setRotation(TFT_ROTATE);
+
+  this->set_backgroundcolor(SCREEN_BGCOLOR);
+  this->draw_panel(1);
 }
 
 void Akane_Screen::set_backgroundcolor(unsigned int color) {

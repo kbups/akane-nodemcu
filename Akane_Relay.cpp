@@ -12,3 +12,8 @@ bool Akane_Relay::isActive() {
   return true;
 }
 
+void Akane_Relay::update(Akane_Sensor *observable) {
+  Akane_Logger::log("[Akane_Relay] Changed detected...");
+  Akane_Logger::log(String(observable->get_value(), 2));
+}
+
