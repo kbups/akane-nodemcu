@@ -32,8 +32,7 @@ void setup() {
   settings = new Akane_Settings(ssid, password);
 
   sensor_ds18b20 = new Akane_Sensor_DS18B20(DHT21_PIN, 0, "ds18b20");
-  sensor_ds18b20->read_value();
-
+  
   relay_fan = new Akane_Relay(0);
   sensor_ds18b20->addObserver(*relay_fan);
 
@@ -42,6 +41,10 @@ void setup() {
   controller = new Akane_Controller(settings, *sensors);
   controller->initialize();
 
+  // 
+  sensor_ds18b20->read_value();
+  //
+  
   screen = new Akane_Screen();
   screen->initialize();
 
@@ -49,8 +52,11 @@ void setup() {
   screen->print_str("AKANE by KBUPS", 1, 1, 20);
 
   screen->print_str(String("IP Address: " + (String)controller->getLocalIP()), 1);
+  screen->print_str(String("Temp: " + (String)sensor_ds18b20->get_value()), 1);
   Akane_Logger::log((String)controller->getLocalIP());
-  Akane_Logger::log((String)WiFi.localIP());
+  Akane_Logger::log("Temperature:" + (String)sensor_ds18b20->get_value());
+  //Akane_Logger::log();
+  
   Serial.println(WiFi.localIP());
 }
 
