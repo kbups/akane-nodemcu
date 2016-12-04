@@ -14,7 +14,7 @@ class Akane_Relay : public Observer<Akane_Sensor> {
     Akane_Relay(int pPin);
     void setActive(bool pActive);
     bool isActive();
-    void update(Akane_Sensor *observable);
+    virtual void update(Akane_Sensor *observable);
 };
 
 #endif

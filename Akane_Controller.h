@@ -10,18 +10,18 @@
 
 class Akane_Controller {
   public:
-    Akane_Settings* settings;
+    //Akane_Settings* settings;
     Akane_Sensor* sensors;
 
   public:
-    Akane_Controller(Akane_Settings* psettings, Akane_Sensor pSensors[]);
+    Akane_Controller(/*Akane_Settings* psettings, */Akane_Sensor pSensors[]);
     void initialize();
     void execute();
     
-    String getLocalIP();
+    //String getLocalIP();
 
   private:
-    void connect();
+    //void connect();
   
 };
 

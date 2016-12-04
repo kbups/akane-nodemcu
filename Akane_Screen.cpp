@@ -1,21 +1,17 @@
 #include "Akane_Screen.h"
 
 Akane_Screen::Akane_Screen() {
-  tft = new Adafruit_ILI9341(TFT_CS, TFT_DC);
-  tft->setFont(&FreeSans9pt7b);
+  tft = new Adafruit_ILI9341(TFT_CS, TFT_DC);  
 }
 
 void Akane_Screen::initialize() { 
+  tft->setFont(&FreeSans9pt7b);
+  
   tft->begin();
   tft->setRotation(TFT_ROTATE);
 
-  this->set_backgroundcolor(SCREEN_BGCOLOR);
-  this->draw_panel(1);
-
-  tft->fillRect(215, 15, 4, 3, ILI9341_WHITE);
-  tft->fillRect(220, 12, 4, 6, ILI9341_WHITE);
-  tft->fillRect(225, 9, 4, 9, ILI9341_WHITE);
-  tft->fillRect(230, 6, 4, 12, ILI9341_WHITE);
+  set_backgroundcolor(SCREEN_BGCOLOR);
+  draw_panel(1);
 }
 
 void Akane_Screen::set_backgroundcolor(unsigned int color) {
@@ -34,7 +30,7 @@ void Akane_Screen::draw_panel(unsigned int pos) {
 
 void Akane_Screen::print_str(const String &txt, unsigned int size, unsigned int x, unsigned int y) {
   tft->setCursor(x, y);
-  this->print_str(txt, size);
+  print_str(txt, size);
 }
 
 void Akane_Screen::print_str(const String &txt, unsigned int size) {
@@ -42,3 +38,13 @@ void Akane_Screen::print_str(const String &txt, unsigned int size) {
   tft->println(txt);
 }
 
+void Akane_Screen::display_wifi_status(bool is_connected) {
+  unsigned int color = ILI9341_WHITE;
+  if(!is_connected) {
+    color = ILI9341_RED;
+  }
+  tft->fillRect(215, 15, 4, 3, color);
+  tft->fillRect(220, 12, 4, 6, color);
+  tft->fillRect(225, 9, 4, 9, color);
+  tft->fillRect(230, 6, 4, 12, color);
+}

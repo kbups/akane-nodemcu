@@ -15,13 +15,25 @@ class Akane_Screen {
     Adafruit_ILI9341* tft;
 
   public:
+    static Akane_Screen& getInstance() {
+        static Akane_Screen instance; // Guaranteed to be destroyed.
+                                      // Instantiated on first use.
+        return instance;
+    }
     Akane_Screen();
+
+  private:
+    Akane_Screen(Akane_Screen const&);   // Don't Implement
+    void operator=(Akane_Screen const&); // Don't implement
+
+  public:
     void initialize();
     void set_backgroundcolor(unsigned int color);
     void set_foregroundcolor(unsigned int color);
     void draw_panel(unsigned int pos);
     void print_str(const String &txt, unsigned int size, unsigned int x, unsigned int y);
     void print_str(const String &txt, unsigned int size);
+    void display_wifi_status(bool is_connected);
 
   private:  
 };

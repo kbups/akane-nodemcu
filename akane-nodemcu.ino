@@ -8,8 +8,10 @@
 #include "Akane_Screen.h"
 #include "Akane_Logger.h"
 #include "Akane_Sensor.h"
+#include "Akane_Sensor_Wifi.h"
 #include "Akane_Sensor_DS18B20.h"
 #include "Akane_Relay.h"
+#include "Akane_Relay_Wifi.h"
 #include "Akane_Controller.h"
 
 //#include "Akane_Sensors.h"
@@ -20,10 +22,11 @@ const char* ssid     = "Livebox-NFP";
 const char* password = "AD5919656EA749C372132E633D";
 
 Akane_Settings* settings;
-Akane_Screen* screen;
 Akane_Controller* controller;
+Akane_Sensor_Wifi* sensor_wifi;
 Akane_Sensor_DS18B20* sensor_ds18b20;
-Akane_Relay *relay_fan;
+Akane_Relay_Wifi* relay_wifi;
+Akane_Relay* relay_fan;
 
 void setup() {
   Akane_Logger::initialize();
@@ -31,38 +34,45 @@ void setup() {
 
   settings = new Akane_Settings(ssid, password);
 
+  sensor_wifi = new Akane_Sensor_Wifi("Wifi");
   sensor_ds18b20 = new Akane_Sensor_DS18B20(DHT21_PIN, 0, "ds18b20");
+
+  relay_wifi = new Akane_Relay_Wifi(settings->ssid, settings->ssid_pwd, true);
+  sensor_wifi->addObserver(*relay_wifi);
   
   relay_fan = new Akane_Relay(0);
   sensor_ds18b20->addObserver(*relay_fan);
 
   Akane_Sensor* sensors[1] = { sensor_ds18b20 }; //sensors[0] = sensor_ds18b20;
 
-  controller = new Akane_Controller(settings, *sensors);
+  controller = new Akane_Controller(/*settings, */*sensors);
   controller->initialize();
 
-  // 
+  //
+  //sensor_wifi->read_value();
   sensor_ds18b20->read_value();
   //
+
+  Akane_Screen::getInstance().initialize();
+
+  Akane_Screen::getInstance().set_foregroundcolor(ILI9341_WHITE);
+  Akane_Screen::getInstance().print_str("AKANE by KBUPS", 1, 1, 20);
+
+  Akane_Screen::getInstance().print_str(String("IP Address: " + (String)relay_wifi->getLocalIP()), 1);
+  Akane_Screen::getInstance().print_str(String("Temp: " + (String)sensor_ds18b20->get_value()), 1);
   
-  screen = new Akane_Screen();
-  screen->initialize();
-
-  screen->set_foregroundcolor(ILI9341_WHITE);
-  screen->print_str("AKANE by KBUPS", 1, 1, 20);
-
-  screen->print_str(String("IP Address: " + (String)controller->getLocalIP()), 1);
-  screen->print_str(String("Temp: " + (String)sensor_ds18b20->get_value()), 1);
-  Akane_Logger::log((String)controller->getLocalIP());
+  Akane_Logger::log((String)relay_wifi->getLocalIP());
   Akane_Logger::log("Temperature:" + (String)sensor_ds18b20->get_value());
-  //Akane_Logger::log();
   
   Serial.println(WiFi.localIP());
+
+  delay(2000);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-
+  sensor_wifi->read_value();
+  delay(5000);
 }
 
 

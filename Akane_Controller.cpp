@@ -1,16 +1,16 @@
 #include "Akane_Controller.h"
 
-Akane_Controller::Akane_Controller(Akane_Settings* psettings, Akane_Sensor pSensors[]) {
-  settings = psettings;
+Akane_Controller::Akane_Controller(/*Akane_Settings* psettings, */Akane_Sensor pSensors[]) {
+  //settings = psettings;
   sensors = pSensors;
   
-  ESP8266WebServer server(ESP8266_PORT);
+  //ESP8266WebServer server(ESP8266_PORT);
 }
 
 void Akane_Controller::initialize() {
-  this->connect();
+  //this->connect();
 }
-
+/*
 void Akane_Controller::connect() {
   // Connect to WiFi network
   WiFi.begin(settings->ssid, settings->ssid_pwd);
@@ -19,16 +19,16 @@ void Akane_Controller::connect() {
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
   }
-}
+}*/
 
 void Akane_Controller::execute() {
   
 }
-
+/*
 String Akane_Controller::getLocalIP() {
   if(WiFi.status() == WL_CONNECTED) {
     return WiFi.localIP().toString();
   }
   return "0.0.0.0";
-}
+}*/
 
