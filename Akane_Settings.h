@@ -28,6 +28,9 @@
 // SERIAL
 #define SERIAL_BAUD_RATE 9600
 
+// TEMPERATURE
+#define TEMP_NOVALUE 85
+
 class Akane_Settings {
   public:
     char* ssid;

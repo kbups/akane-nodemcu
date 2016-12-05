@@ -16,6 +16,7 @@ class Akane_Relay_Wifi : public Akane_Relay {
     char* ssid_pwd;
     uint8_t status;
     uint8_t prev_status;
+    String prev_ip_address;
     bool should_be_connected;
     
   public:
@@ -23,6 +24,7 @@ class Akane_Relay_Wifi : public Akane_Relay {
       should_be_connected = is_connected; 
 
       prev_status = WL_IDLE_STATUS;
+      prev_ip_address = "0.0.0.0";
       ESP8266WebServer server(ESP8266_PORT);
     };
     inline void setActive(bool pActive) {
@@ -75,12 +77,15 @@ class Akane_Relay_Wifi : public Akane_Relay {
       if((res != WL_CONNECTED && should_be_connected) || (res != WL_DISCONNECTED && !should_be_connected)) {
         setActive(should_be_connected);
       }
+
+      String ip_address = getLocalIP();
         
-      if(prev_status != res) {
-        Akane_Logger::log("[Akane_Relay_Wifi][update] Status has changed (" + String(prev_status) + " to " + String(res) + ")");
-        Akane_Screen::getInstance().display_wifi_status(res == WL_CONNECTED);
+      if(prev_status != res || prev_ip_address != ip_address) {
+        Akane_Logger::log("[Akane_Relay_Wifi][update] Status has changed: " + String(prev_status) + " to " + String(res) + " AND " + prev_ip_address + " to " + ip_address);
+        Akane_Screen::getInstance().display_wifi_status(res == WL_CONNECTED, ip_address, prev_ip_address);
       }
       prev_status = res;
+      prev_ip_address = ip_address;
       status = res;
     };
 };
