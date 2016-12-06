@@ -39,7 +39,8 @@ class Akane_Screen {
     void print_str(unsigned int bg_color, String prev_str, unsigned int fg_color, String str, unsigned int size, unsigned int x, unsigned int y);
     void display_wifi_status(bool is_connected, String ip_address, String prev_ip_address);
     void display_temperature(float temp, float prev_temp);
-
+    void display_humidity(float hum, float prev_hum);
+    
   private:  
 };
 

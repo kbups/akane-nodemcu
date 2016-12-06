@@ -65,15 +65,37 @@ void Akane_Screen::display_wifi_status(bool is_connected, String ip_address, Str
 
 void Akane_Screen::display_temperature(float temp, float prev_temp) {
   set_foregroundcolor(SCREEN_PANEL1COLOR);
-  if(prev_temp == TEMP_NOVALUE) {
-    print_str("-- °", 2, 150, 135);
+  if(prev_temp >= TEMP_MAXVALUE) {
+    print_str("--", 2, 150, 135);
   }
-  print_str(String(prev_temp, 1) + "°", 2, 150, 135);
+  else {
+    print_str(String(prev_temp, 1), 2, 150, 135);
+  }
 
   set_foregroundcolor(SCREEN_PANELTXTCOLOR);
-  if(temp == TEMP_NOVALUE) {
-    print_str("-- °", 2, 150, 135);
+  if(temp >= TEMP_MAXVALUE) {
+    print_str("--", 2, 150, 135);
   }
-  print_str(String(temp, 1) + "°", 2, 150, 135);
+  else {
+    print_str(String(temp, 1), 2, 150, 135);
+  }
+}
+
+void Akane_Screen::display_humidity(float hum, float prev_hum) {
+  set_foregroundcolor(SCREEN_PANEL2COLOR);
+  if(prev_hum < 0) {
+    print_str("--%", 2, 150, 225);
+  }
+  else {
+    print_str(String(prev_hum, 1) + "%", 2, 150, 225);
+  }
+
+  set_foregroundcolor(SCREEN_PANELTXTCOLOR);
+  if(hum < 0) {
+    print_str("--%", 2, 150, 225);
+  }
+  else {
+    print_str(String(hum, 1) + "%", 2, 150, 225);
+  }
 }
 

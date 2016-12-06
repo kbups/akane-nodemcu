@@ -29,7 +29,8 @@
 #define SERIAL_BAUD_RATE 9600
 
 // TEMPERATURE
-#define TEMP_NOVALUE 85
+#define TEMP_MINVALUE 0
+#define TEMP_MAXVALUE 85
 
 class Akane_Settings {
   public:

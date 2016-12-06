@@ -11,7 +11,7 @@ class Akane_Observer_Temp : public Observer<Akane_Sensor> {
     
   public:
     Akane_Observer_Temp() {
-      prev_temp = TEMP_NOVALUE;
+      prev_temp = TEMP_MAXVALUE;
     };
     inline virtual void update(Akane_Sensor *observable) {
       float res = observable->get_value();
