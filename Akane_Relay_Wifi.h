@@ -43,7 +43,7 @@ class Akane_Relay_Wifi : public Akane_Relay {
         }
       }
       else if(pActive && isActive()) {
-        Akane_Logger::log("[Akane_Relay_Wifi][setActive] Wifi is active. Tring to disconnect...");
+        Akane_Logger::log("[Akane_Relay_Wifi][setActive] Wifi is active. Trying to disconnect...");
         WiFi.disconnect(); 
       }
 

@@ -12,6 +12,8 @@
 #include "Akane_Sensor_DS18B20.h"
 #include "Akane_Relay.h"
 #include "Akane_Relay_Wifi.h"
+#include "Akane_Relay_Fan.h"
+#include "Akane_Relay_Heater.h"
 #include "Akane_Observer_Temp.h"
 #include "Akane_Observer_Hum.h"
 #include "Akane_Controller.h"
@@ -28,7 +30,8 @@ Akane_Controller* controller;
 Akane_Sensor_Wifi* sensor_wifi;
 Akane_Sensor_DS18B20* sensor_ds18b20;
 Akane_Relay_Wifi* relay_wifi;
-Akane_Relay* relay_fan;
+Akane_Relay_Fan* relay_fan;
+Akane_Relay_Heater* relay_heater;
 Akane_Observer_Temp* observer_temp;
 Akane_Observer_Hum* observer_hum;
 
@@ -44,23 +47,20 @@ void setup() {
   relay_wifi = new Akane_Relay_Wifi(settings->ssid, settings->ssid_pwd, true);
   sensor_wifi->addObserver(*relay_wifi);
   
-  relay_fan = new Akane_Relay(0);
+  relay_fan = new Akane_Relay_Fan(15);
+  //relay_heater = new Akane_Relay_Heater(0);
   observer_temp = new Akane_Observer_Temp();
   observer_hum = new Akane_Observer_Hum();
-  sensor_ds18b20->addObserver(*relay_fan);
+  //sensor_ds18b20->addObserver(*relay_heater);
   sensor_ds18b20->addObserver(*observer_temp);
   sensor_ds18b20->addObserver(*observer_hum);
+  sensor_ds18b20->addObserver(*relay_fan);
 
   Akane_Sensor* sensors[1] = { sensor_ds18b20 }; //sensors[0] = sensor_ds18b20;
 
   controller = new Akane_Controller(/*settings, */*sensors);
   controller->initialize();
-
-  //
-  //sensor_wifi->read_value();
-  //sensor_ds18b20->read_value();
-  //
-
+  
   Akane_Screen::getInstance().initialize();
 
   Akane_Screen::getInstance().set_foregroundcolor(ILI9341_WHITE);
@@ -71,7 +71,7 @@ void loop() {
   // put your main code here, to run repeatedly:
   sensor_wifi->read_value();
   sensor_ds18b20->read_value();
-  delay(5000);
+  delay(1000);
 }
 
 

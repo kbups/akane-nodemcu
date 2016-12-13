@@ -7,8 +7,9 @@
 #include "Observer.h"
 
 class Akane_Relay : public Observer<Akane_Sensor> {
-  private:
+  protected:
     int pin;
+    bool pin_status;
     
   public:
     Akane_Relay(int pPin);

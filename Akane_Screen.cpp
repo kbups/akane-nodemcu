@@ -84,18 +84,24 @@ void Akane_Screen::display_temperature(float temp, float prev_temp) {
 void Akane_Screen::display_humidity(float hum, float prev_hum) {
   set_foregroundcolor(SCREEN_PANEL2COLOR);
   if(prev_hum < 0) {
-    print_str("--%", 2, 150, 225);
+    print_str("--", 2, 150, 225);
   }
   else {
-    print_str(String(prev_hum, 1) + "%", 2, 150, 225);
+    print_str(String(prev_hum, 1), 2, 150, 225);
   }
 
   set_foregroundcolor(SCREEN_PANELTXTCOLOR);
   if(hum < 0) {
-    print_str("--%", 2, 150, 225);
+    print_str("--", 2, 150, 225);
   }
   else {
-    print_str(String(hum, 1) + "%", 2, 150, 225);
+    print_str(String(hum, 1), 2, 150, 225);
   }
 }
+
+void Akane_Screen::update_fan_status(bool is_active) {
+  unsigned int color = is_active ? ILI9341_RED : ILI9341_BLACK;
+  tft->fillRect(20, 260, 8, 8, color);
+}
+
 

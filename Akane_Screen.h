@@ -40,6 +40,7 @@ class Akane_Screen {
     void display_wifi_status(bool is_connected, String ip_address, String prev_ip_address);
     void display_temperature(float temp, float prev_temp);
     void display_humidity(float hum, float prev_hum);
+    void update_fan_status(bool is_active);
     
   private:  
 };
