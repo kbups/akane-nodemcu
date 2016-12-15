@@ -13,6 +13,7 @@ class Akane_Relay_Fan : public Akane_Relay {
   public:
     Akane_Relay_Fan(int pPin): Akane_Relay(pPin) {
       prev_status = false;
+      Akane_Screen::getInstance().update_fan_info(22);
     };
     inline virtual void update(Akane_Sensor *observable) {
       uint8_t res = (uint8_t) observable->get_value();

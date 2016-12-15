@@ -8,26 +8,39 @@
 
 class Akane_Relay_Heater : public Akane_Relay {
   private:
+    bool prev_status;
   
   public:
-    Akane_Relay_Heater(int pPin): Akane_Relay(pPin) { };
+    Akane_Relay_Heater(int pPin): Akane_Relay(pPin) { 
+      prev_status = false;
+      Akane_Screen::getInstance().update_heater_info(22);
+    };
     inline virtual void update(Akane_Sensor *observable) {
       uint8_t res = (uint8_t) observable->get_value();
       Akane_Logger::log("[Akane_Relay_Heater][update] Receive value is: " + String(res));
       
-      //if((res != WL_CONNECTED && should_be_connected) || (res != WL_DISCONNECTED && !should_be_connected)) {
-      //  setActive(should_be_connected);
-      //}
+      if(res >= TEMP_MAXVALUE) {
+        Akane_Logger::log("[Akane_Relay_Heater][update] Invalid data received. Deactivating relay...");
+        setActive(false);
+      }
+      else {
+        bool is_active = isActive();
+        if(res >= 22 && is_active) {
+          Akane_Logger::log("[Akane_Relay_Heater][update] Deactivating relay...");
+          setActive(false);
+        }
+        else if(res < 22 && !is_active) {
+          Akane_Logger::log("[Akane_Relay_Heater][update] Activating relay...");
+          setActive(true);
+        }
+      }
 
-      //String ip_address = getLocalIP();
-        
-      //if(prev_status != res || prev_ip_address != ip_address) {
-        //Akane_Logger::log("[Akane_Relay_Heater][update] Status has changed: " + String(prev_status) + " to " + String(res) + " AND " + prev_ip_address + " to " + ip_address);
-        //Akane_Screen::getInstance().display_fan_status(res == WL_CONNECTED, ip_address, prev_ip_address);
-      //}
-      //prev_status = res;
-      //prev_ip_address = ip_address;
-      //status = res;
+      if(prev_status != pin_status) {
+        Akane_Logger::log("[Akane_Relay_Heater][update] Status has changed: " + String(prev_status) + " to " + String(pin_status));
+        Akane_Screen::getInstance().update_heater_status(pin_status);
+      
+        prev_status = pin_status;
+      }
     };
 };
 
