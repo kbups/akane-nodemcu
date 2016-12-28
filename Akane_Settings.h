@@ -19,6 +19,8 @@
 #define RELAY_TMP 0
 #define RELAY_HUM 0
 #define RELAY_WAT 0
+#define MIN_HEATER_CHANGE_DELAY 5000
+#define MIN_FAN_CHANGE_DELAY 3000
 
 // SCREEN
 #define TFT_DC 5

@@ -29,6 +29,8 @@ class Akane_Screen {
     Akane_Screen(Akane_Screen const&);   // Don't Implement
     void operator=(Akane_Screen const&); // Don't implement
 
+    bool wifi_ap_displayed;
+
   public:
     void initialize();
     void set_backgroundcolor(unsigned int color);
@@ -38,6 +40,7 @@ class Akane_Screen {
     void print_str(const String &txt, unsigned int size);
     void print_str(unsigned int bg_color, String prev_str, unsigned int fg_color, String str, unsigned int size, unsigned int x, unsigned int y);
     void display_wifi_status(bool is_connected, String ip_address, String prev_ip_address);
+    void display_wifi_ap_status(String ip_address);
     void display_temperature(float temp, float prev_temp);
     void display_humidity(float hum, float prev_hum);
     void update_fan_status(bool is_active);

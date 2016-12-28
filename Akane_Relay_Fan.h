@@ -11,8 +11,9 @@ class Akane_Relay_Fan : public Akane_Relay {
     bool prev_status;
   
   public:
-    Akane_Relay_Fan(int pPin): Akane_Relay(pPin) {
+    Akane_Relay_Fan(int pPin, unsigned int min_change_delay): Akane_Relay(pPin, min_change_delay) {
       prev_status = false;
+
       Akane_Screen::getInstance().update_fan_info(22);
     };
     inline virtual void update(Akane_Sensor *observable) {

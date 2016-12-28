@@ -82,6 +82,13 @@ void Akane_Screen::display_wifi_status(bool is_connected, String ip_address, Str
   print_str(SCREEN_BGCOLOR, prev_ip_address, ILI9341_WHITE, ip_address, 1, 80, 20);
 }
 
+void Akane_Screen::display_wifi_ap_status(String ip_address) {
+  if(!wifi_ap_displayed) {
+    print_str(SCREEN_BGCOLOR, "", ILI9341_WHITE, ip_address, 1, 80, 40);
+    wifi_ap_displayed = true;
+  }
+}
+
 void Akane_Screen::display_temperature(float temp, float prev_temp) {
   set_foregroundcolor(SCREEN_PANEL1COLOR);
   if(prev_temp >= TEMP_MAXVALUE) {

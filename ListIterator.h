@@ -18,14 +18,14 @@ public:
   }
   //
   T next(){
-    Node<T>* temp = new Node<T>;
+    Node<T>* temp;// = new Node<T>; // TODO
     temp = current->next;
     current = temp;
     return current->data;
   }
   
   Node<T>* next_node(){
-    Node<T>* temp = new Node<T>;
+    Node<T>* temp;// = new Node<T>; // TODO
     temp = current->next;
     current = temp;
     return current;

@@ -15,7 +15,7 @@ public:
    //
    //Method for Push some Data at the End of the list
    void push_last(T data) {
-     Node<T>* temp = new Node<T>;
+     Node<T>* temp;// = new Node<T>; // TODO
      temp = root;
      //The Iterating Part
      while (temp->next != 0) {
