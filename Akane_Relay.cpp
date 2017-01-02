@@ -1,9 +1,10 @@
 #include "Akane_Relay.h"
 
-Akane_Relay::Akane_Relay(int pPin, unsigned int pMin_change_delay) {
+Akane_Relay::Akane_Relay(int pPin, unsigned int pMin_change_delay_on, unsigned int pMin_change_delay_off) {
   pin = pPin;
   pin_status = false;
-  min_change_delay = pMin_change_delay;
+  min_change_delay_on = pMin_change_delay_on;
+  min_change_delay_off = pMin_change_delay_off;
   pinMode(pin, OUTPUT);
   
   prev_change = millis();
@@ -18,6 +19,11 @@ void Akane_Relay::setActive(bool pActive) {
   }
   else {
     t_delay = t - prev_change;
+  }
+
+  unsigned int min_change_delay = min_change_delay_on;
+  if(!pin_status) {
+    min_change_delay = min_change_delay_off;
   }
 
   if(t_delay >= min_change_delay) {
@@ -45,8 +51,9 @@ bool Akane_Relay::isActive() {
   return pin_status;
 }
 
-void Akane_Relay::set_min_delay(unsigned int pMin_change_delay) {
-  min_change_delay = pMin_change_delay;
+void Akane_Relay::set_min_delays(unsigned int pMin_change_delay_on, unsigned int pMin_change_delay_off) {
+  min_change_delay_on = pMin_change_delay_on;
+  min_change_delay_off = pMin_change_delay_off;
 }
 
 void Akane_Relay::update(Akane_Sensor *observable) {

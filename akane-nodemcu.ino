@@ -13,6 +13,7 @@
 #include "Akane_Relay.h"
 #include "Akane_Relay_Fan.h"
 #include "Akane_Relay_Heater.h"
+#include "Akane_Relay_Hum.h"
 #include "Akane_Observer_Wifi.h"
 #include "Akane_Observer_Temp.h"
 #include "Akane_Observer_Hum.h"
@@ -32,6 +33,7 @@ Akane_Sensor_DS18B20* sensor_ds18b20;
 Akane_Observer_Wifi* observer_wifi;
 Akane_Relay_Fan* relay_fan;
 Akane_Relay_Heater* relay_heater;
+Akane_Relay_Hum* relay_hum;
 Akane_Observer_Temp* observer_temp;
 Akane_Observer_Hum* observer_hum;
 
@@ -54,12 +56,14 @@ void setup() {
   
   relay_fan = new Akane_Relay_Fan(15, MIN_FAN_CHANGE_DELAY);
   relay_heater = new Akane_Relay_Heater(0, MIN_HEATER_CHANGE_DELAY);
+  relay_hum = new Akane_Relay_Hum(0, 20000, 60000);
   observer_temp = new Akane_Observer_Temp();
   observer_hum = new Akane_Observer_Hum();
   sensor_ds18b20->addObserver(*relay_heater);
   sensor_ds18b20->addObserver(*observer_temp);
   sensor_ds18b20->addObserver(*observer_hum);
   sensor_ds18b20->addObserver(*relay_fan);
+  sensor_ds18b20->addObserver(*relay_hum);
 
   Akane_Sensor* sensors[1] = { sensor_ds18b20 }; //sensors[0] = sensor_ds18b20;
 
