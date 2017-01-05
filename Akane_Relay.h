@@ -13,12 +13,13 @@ class Akane_Relay : public Observer<Akane_Sensor> {
     int pin;
     bool pin_status;
     unsigned long prev_change;
-    int min_change_delay_on;
-    int min_change_delay_off;
+    unsigned int min_change_delay_on;
+    unsigned int min_change_delay_off;
     
   public:
     Akane_Relay(int pPin, unsigned int pMin_change_delay_on, unsigned int pMin_change_delay_off);
     void setActive(bool pActive);
+    void setActive(bool pActive, bool pForce);
     bool isActive();
     void set_min_delays(unsigned int pMin_change_delay_on, unsigned int pMin_change_delay_off);
     virtual void update(Akane_Sensor *observable);

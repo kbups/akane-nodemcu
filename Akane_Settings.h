@@ -35,21 +35,51 @@
 #define TEMP_MAXVALUE 85
 
 class Akane_Settings {
-  public:
+  private:
     char* ssid;
     char* ssid_pwd;
 
-    float temp_delta;
+    short fan_instruction;
+    short heater_instruction;
+    short hum_instruction;
+
+    /*float temp_delta;
     float temp_commands[];
 
     float hum_delta;
-    float hum_commands[];
+    float hum_commands[];*/
   public:
+    static Akane_Settings& getInstance() {
+        static Akane_Settings instance; // Guaranteed to be destroyed.
+                                        // Instantiated on first use.
+        return instance;
+    }
     Akane_Settings();
-    Akane_Settings(const char* pssid, const char* pssid_pwd);
+    //Akane_Settings(const char* pssid, const char* pssid_pwd);
 
+    void initialize(const char* pssid, const char* pssid_pwd);
+    
+    char* get_ssid() { return ssid; };
+    void set_ssid(char* pSsid) { ssid = pSsid; };
+    
+    char* get_ssid_pwd() { return ssid_pwd; };
+    void set_ssid_pwd(char* pSsid_pwd) { ssid_pwd = pSsid_pwd; };
+
+    short get_fan_instruction() { return fan_instruction; };
+    void set_fan_instruction(short pValue) { fan_instruction = pValue; };
+
+    short get_heater_instruction() { return heater_instruction; };
+    void set_heater_instruction(short pValue) { heater_instruction = pValue; };
+
+    short get_hum_instruction() { return hum_instruction; };
+    void set_hum_instruction(short pValue) { hum_instruction = pValue; };
+    
     void load();
     void save();
+    
+  private:
+    Akane_Settings(Akane_Settings const&);   // Don't Implement
+    void operator=(Akane_Settings const&); // Don't implement
 };
 
 #endif

@@ -22,11 +22,7 @@
 //#include "Akane_Sensors.h"
 //#include "Akane_Relays.h"
 
-/** ESP8266 **/
-const char* ssid     = "Livebox-NFP";
-const char* password = "AD5919656EA749C372132E633D";
-
-Akane_Settings* settings;
+//Akane_Settings* settings;
 Akane_Controller* controller;
 Akane_Sensor_Wifi* sensor_wifi;
 Akane_Sensor_DS18B20* sensor_ds18b20;
@@ -41,7 +37,7 @@ void setup() {
   Akane_Logger::initialize();
   Akane_Logger::log("Initializing...");
 
-  settings = new Akane_Settings(ssid, password);
+  Akane_Settings::getInstance().load();
   
   Akane_Screen::getInstance().initialize();
 
@@ -51,12 +47,12 @@ void setup() {
   sensor_wifi = new Akane_Sensor_Wifi("Wifi");
   sensor_ds18b20 = new Akane_Sensor_DS18B20(DHT21_PIN, 0, "ds18b20");
 
-  observer_wifi = new Akane_Observer_Wifi(settings->ssid, settings->ssid_pwd, true);
+  observer_wifi = new Akane_Observer_Wifi(true);
   sensor_wifi->addObserver(*observer_wifi);
   
   relay_fan = new Akane_Relay_Fan(15, MIN_FAN_CHANGE_DELAY);
   relay_heater = new Akane_Relay_Heater(0, MIN_HEATER_CHANGE_DELAY);
-  relay_hum = new Akane_Relay_Hum(0, 20000, 60000);
+  relay_hum = new Akane_Relay_Hum(0, 15000, 60000);
   observer_temp = new Akane_Observer_Temp();
   observer_hum = new Akane_Observer_Hum();
   sensor_ds18b20->addObserver(*relay_heater);
@@ -75,6 +71,8 @@ void loop() {
   // put your main code here, to run repeatedly:
   sensor_wifi->read_value();
   sensor_ds18b20->read_value();
+
+  Akane_Screen::getInstance().update_time(8, 10, 30);
 
    Serial.printf("Heap size: %u\n", ESP.getFreeHeap());
   delay(1000);

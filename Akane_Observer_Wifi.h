@@ -1,7 +1,7 @@
 #ifndef _AKANE_RELAY_WIFIH_
 #define _AKANE_RELAY_WIFIH_
 
-#include "ESP8266WiFi\src\ESP8266WiFi.h"
+#include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 
@@ -15,17 +15,13 @@
 
 class Akane_Observer_Wifi : public Observer<Akane_Sensor> {
   private:
-    char* ssid;
-    char* ssid_pwd;
     uint8_t status;
     uint8_t prev_status;
     String prev_ip_address;
     bool should_be_connected;
     
   public:
-    Akane_Observer_Wifi(char* pssid, char* pssid_pwd, bool is_connected) {
-      ssid = pssid;
-      ssid_pwd = pssid_pwd;
+    Akane_Observer_Wifi(bool is_connected) {
       should_be_connected = is_connected; 
 
       prev_status = WL_IDLE_STATUS;
@@ -42,7 +38,7 @@ class Akane_Observer_Wifi : public Observer<Akane_Sensor> {
       if(pActive && !isActive()) {
         Akane_Logger::log("[Akane_Relay_Wifi][setActive] Wifi is not active. Tring to connect...");
         
-        WiFi.begin(ssid, ssid_pwd);
+        WiFi.begin(Akane_Settings::getInstance().get_ssid(), Akane_Settings::getInstance().get_ssid_pwd());
         
         // Wait for connection
         unsigned int nb_check = 0;
@@ -61,20 +57,24 @@ class Akane_Observer_Wifi : public Observer<Akane_Sensor> {
 
       Akane_Screen::getInstance().display_wifi_ap_status(getLocalIP_AP());
     };
+    
     inline bool isActive() {
       status = WiFi.status();
       Akane_Logger::log("[Akane_Relay_Wifi][isActive] Getting Wifi status..." + String(status));
       return status == WL_CONNECTED;
     };
+    
     inline String getLocalIP() {
       if(isActive()) {
         return WiFi.localIP().toString();
       }
       return "0.0.0.0";
     };
+    
     inline String getLocalIP_AP() { 
       return WiFi.softAPIP().toString();
-    };  
+    };
+    
     inline virtual void update(Akane_Sensor *observable) {
       uint8_t res = (uint8_t) observable->get_value();
       Akane_Logger::log("[Akane_Relay_Wifi][update] Receive value is: " + String(res));

@@ -11,6 +11,10 @@ Akane_Relay::Akane_Relay(int pPin, unsigned int pMin_change_delay_on, unsigned i
 }
 
 void Akane_Relay::setActive(bool pActive) {
+    setActive(pActive, false);
+}
+
+void Akane_Relay::setActive(bool pActive, bool pForce) {
   unsigned long t = millis();
 
   unsigned long t_delay = 0;
@@ -26,8 +30,8 @@ void Akane_Relay::setActive(bool pActive) {
     min_change_delay = min_change_delay_off;
   }
 
-  if(t_delay >= min_change_delay) {
-    Akane_Logger::log("[Akane_Relay][setActive] Delay has been reached: " + String(t_delay) + "/" + String(min_change_delay) + ". Updating relay...");
+  if(t_delay >= min_change_delay || pForce) {
+    Akane_Logger::log("[Akane_Relay][setActive] Delay has been reached: " + String(t_delay) + "/" + String(min_change_delay) + " (force=" + String(pForce) + "). Updating relay...");
   
     if(pActive) {
       Akane_Logger::log("[Akane_Relay][setActive] Activate PIN " + String(pin) + "...");

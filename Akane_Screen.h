@@ -47,6 +47,9 @@ class Akane_Screen {
     void update_fan_info(float val);
     void update_heater_status(bool is_active);
     void update_heater_info(float val);
+    void update_hum_status(bool is_active);
+    void update_hum_info(float val);
+    void update_time(short hours, short minutes, short seconds);
     
   private:  
 };

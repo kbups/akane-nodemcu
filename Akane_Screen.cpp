@@ -31,6 +31,16 @@ void Akane_Screen::initialize() {
   set_foregroundcolor(ILI9341_WHITE);
   print_str("FAN EXT.", 1, 28, 312);
   update_fan_status(false);
+  
+  // Humifier
+  tft->drawFastHLine(0, 241, 240, ILI9341_WHITE);
+  //tft->drawFastHLine(0, 267, 240, ILI9341_WHITE);
+  tft->drawFastVLine(0, 241, 25, ILI9341_WHITE);
+  //tft->drawFastVLine(120, 293, 25, ILI9341_WHITE);
+  tft->drawFastVLine(239, 241, 25, ILI9341_WHITE);
+  set_foregroundcolor(ILI9341_WHITE);
+  print_str("HUM.", 1, 28, 260);
+  update_hum_status(false);
 }
 
 void Akane_Screen::set_backgroundcolor(unsigned int color) {
@@ -46,9 +56,9 @@ void Akane_Screen::draw_panel(unsigned int pos) {
   set_foregroundcolor(ILI9341_WHITE);
   print_str("Temperature", 1, 10, 135);
 
-  tft->fillRect(0, 190, 240, 50, SCREEN_PANEL2COLOR);
+  tft->fillRect(0, 160, 240, 50, SCREEN_PANEL2COLOR);
   set_foregroundcolor(ILI9341_WHITE);
-  print_str("Humidity", 1, 10, 225);
+  print_str("Humidity", 1, 10, 195);
 }
 
 void Akane_Screen::print_str(const String &txt, unsigned int size, unsigned int x, unsigned int y) {
@@ -110,18 +120,18 @@ void Akane_Screen::display_temperature(float temp, float prev_temp) {
 void Akane_Screen::display_humidity(float hum, float prev_hum) {
   set_foregroundcolor(SCREEN_PANEL2COLOR);
   if(prev_hum < 0) {
-    print_str("--", 2, 150, 225);
+    print_str("--", 2, 150, 195);
   }
   else {
-    print_str(String(prev_hum, 1), 2, 150, 225);
+    print_str(String(prev_hum, 1), 2, 150, 195);
   }
 
   set_foregroundcolor(SCREEN_PANELTXTCOLOR);
   if(hum < 0) {
-    print_str("--", 2, 150, 225);
+    print_str("--", 2, 150, 195);
   }
   else {
-    print_str(String(hum, 1), 2, 150, 225);
+    print_str(String(hum, 1), 2, 150, 195);
   }
 }
 
@@ -145,5 +155,22 @@ void Akane_Screen::update_heater_info(float val) {
   tft->fillRect(121, 268, 118, 24, SCREEN_BGCOLOR);
   set_foregroundcolor(SCREEN_PANEL1COLOR);
   print_str(String(val), 1, 130, 286);
+}
+
+void Akane_Screen::update_hum_status(bool is_active) {
+  unsigned int color = is_active ? ILI9341_GREEN : ILI9341_RED;
+  tft->fillRect(10, 250, 8, 8, color);
+}
+
+void Akane_Screen::update_hum_info(float val) {
+  tft->fillRect(121, 242, 118, 24, SCREEN_BGCOLOR);
+  set_foregroundcolor(SCREEN_PANEL1COLOR);
+  print_str(String(val), 1, 130, 260);
+}
+
+void Akane_Screen::update_time(short hours, short minutes, short seconds) {
+  //tft->fillRect(1, 50, 240, 50, ILI9341_RED);
+  set_foregroundcolor(ILI9341_WHITE);
+  print_str(String(hours) + ":" + String(minutes) + ":" + String(seconds), 1, 80, 85);
 }
 
