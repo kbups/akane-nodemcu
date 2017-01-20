@@ -8,7 +8,7 @@
 #define SERIAL_SPEED 115200
 
 // SENSORS
-#define DHT21_PIN  2    // GPIO2 / D4
+#define AM2301_PIN 2    // GPIO2 / D4
 #define DS1307_SDA 3    // GPIO3 / D9
 #define DS1307_SCL 1    // GPIO1 / D10
 #define ILI9341_DC 5    // GPI05 / D1
@@ -33,6 +33,10 @@
 // TEMPERATURE
 #define TEMP_MINVALUE 0
 #define TEMP_MAXVALUE 85
+
+// HUMIDITY
+#define HUM_MINVALUE 0
+#define HUM_MAXVALUE 100
 
 class Akane_Settings {
   private:

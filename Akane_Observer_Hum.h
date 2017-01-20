@@ -14,7 +14,9 @@ class Akane_Observer_Hum : public Observer<Akane_Sensor> {
       prev_hum = -1;
     };
     inline virtual void update(Akane_Sensor *observable) {
-      float res = observable->get_value();
+      float res = HUM_MAXVALUE;
+      if(observable->get_nbvalues() > 1)
+        res = observable->get_value1();
       Akane_Logger::log("[Akane_Observer_Hum][update] Receive value is: " + String(res));
 
       Akane_Screen::getInstance().display_humidity(res, prev_hum);

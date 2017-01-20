@@ -7,8 +7,10 @@
 
 class Akane_Sensor : public Observable<Akane_Sensor> {
   protected:
-    float value;
     String name;
+    unsigned int nbvalues;
+    float value;
+    float value1;
   
   public:
     Akane_Sensor();
@@ -21,7 +23,10 @@ class Akane_Sensor : public Observable<Akane_Sensor> {
       Akane_Logger::log("[Akane_Sensor] Notifying observers...");
       notifyObservers();
     };
+    short int get_nbvalues();
+    void set_nbvalues(short int count);
     float get_value();
+    float get_value1();
 };
 
 #endif

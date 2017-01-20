@@ -5,7 +5,8 @@ Akane_Screen::Akane_Screen() {
 }
 
 void Akane_Screen::initialize() { 
-  tft->setFont(&FreeSans9pt7b);
+  //tft->setFont(&FreeSans9pt7b);
+  tft->setFont(&Roboto_Light9pt7b);
   
   tft->begin();
   tft->setRotation(TFT_ROTATE);
