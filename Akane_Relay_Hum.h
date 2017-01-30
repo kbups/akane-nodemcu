@@ -16,11 +16,11 @@ class Akane_Relay_Hum : public Akane_Relay {
       prev_status = false;
       max_duration = pMin_change_delay_on;
 
-      Akane_Screen::getInstance().update_hum_info(Akane_Settings::getInstance().get_hum_instruction());
+      //Akane_Screen::getInstance().update_fogger_info(Akane_Settings::getInstance().get_hum_instruction());
     };
     
     inline virtual void update(Akane_Sensor *observable) {
-      float res = (float) observable->get_value();
+      float res = (float) observable->get_value1();
       Akane_Logger::log("[Akane_Relay_Hum][update] Receive value is: " + String(res));
       
       if(res >= TEMP_MAXVALUE) {
@@ -65,7 +65,7 @@ class Akane_Relay_Hum : public Akane_Relay {
 
       if(prev_status != pin_status) {
         Akane_Logger::log("[Akane_Relay_Hum][update] Status has changed: " + String(prev_status) + " to " + String(pin_status));
-        Akane_Screen::getInstance().update_hum_status(pin_status);
+        //Akane_Screen::getInstance().update_fogger_status(pin_status);
       
         prev_status = pin_status;
       }
