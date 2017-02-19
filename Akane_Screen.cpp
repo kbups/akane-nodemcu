@@ -48,6 +48,13 @@ void Akane_Screen::initialize() {
   tft->setTextColor(SCREEN_RELAY_FGLIGHT);
   print_str("LIGHT", 1, 196, 304);
   update_light_status(false);
+
+  // Icons
+  tft->drawXBitmap(25, 38, days_bits, 40, 40, SCREEN_FGCOLOR);
+  tft->drawXBitmap(7, 98, temperature_bits, 40, 40, SCREEN_FGCOLOR);
+  tft->drawXBitmap(129, 98, drop_bits, 40, 40, SCREEN_FGCOLOR);
+  tft->drawXBitmap(10, 159, water_bits, 40, 40, SCREEN_FGCOLOR);
+  tft->drawXBitmap(130, 159, sun_bits, 40, 40, SCREEN_FGCOLOR);
 }
 
 /** ==============================================================================================

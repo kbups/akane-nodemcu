@@ -9,10 +9,8 @@
 
 // SENSORS
 #define AM2301_PIN 2    // GPIO2 / D4
-#define DS1307_SDA 3    // GPIO3 / D9
-#define DS1307_SCL 1    // GPIO1 / D10
-#define ILI9341_DC 5    // GPI05 / D1
-#define ILI9341_CS 4    // GPI04 / D2
+#define DS1307_SDA 4    // GPI04 / D2
+#define DS1307_SCL 5    // GPI05 / D1
 
 // OUTPUTS
 #define RELAY_FAN 0
@@ -23,8 +21,8 @@
 #define MIN_FAN_CHANGE_DELAY 3000
 
 // SCREEN
-#define TFT_DC 5
-#define TFT_CS 4
+#define TFT_DC 15//5 = GPIO5 = D1, 15 = GPIO15 = D8 
+#define TFT_CS 16//1//4 = GPIO4 = D2, 16 = GPIO16 = D0
 #define TFT_ROTATE 2 // 1 Horizontal (pins on right) / 3 Horizontal (pins on left)
 
 // SERIAL
@@ -43,9 +41,9 @@ class Akane_Settings {
     char* ssid;
     char* ssid_pwd;
 
-    short fan_instruction;
-    short heater_instruction;
-    short hum_instruction;
+    float fan_instruction;
+    float heater_instruction;
+    float hum_instruction;
 
     /*float temp_delta;
     float temp_commands[];
@@ -69,14 +67,14 @@ class Akane_Settings {
     char* get_ssid_pwd() { return ssid_pwd; };
     void set_ssid_pwd(char* pSsid_pwd) { ssid_pwd = pSsid_pwd; };
 
-    short get_fan_instruction() { return fan_instruction; };
-    void set_fan_instruction(short pValue) { fan_instruction = pValue; };
+    float get_fan_instruction() { return fan_instruction; };
+    void set_fan_instruction(float pValue) { fan_instruction = pValue; };
 
-    short get_heater_instruction() { return heater_instruction; };
-    void set_heater_instruction(short pValue) { heater_instruction = pValue; };
+    float get_heater_instruction() { return heater_instruction; };
+    void set_heater_instruction(float pValue) { heater_instruction = pValue; };
 
-    short get_hum_instruction() { return hum_instruction; };
-    void set_hum_instruction(short pValue) { hum_instruction = pValue; };
+    float get_hum_instruction() { return hum_instruction; };
+    void set_hum_instruction(float pValue) { hum_instruction = pValue; };
     
     void load();
     void save();
