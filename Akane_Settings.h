@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 
+#define DEBUG_AKANE 0
 #define ESP8266_PORT 80
 
 #define SERIAL_SPEED 115200

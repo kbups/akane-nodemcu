@@ -5,5 +5,6 @@ void Akane_Logger::initialize() {
 }
 
 void Akane_Logger::log(const String &msg) {
-  Serial.println(msg);
+  if(DEBUG_AKANE == 1)
+    Serial.println(msg);
 }

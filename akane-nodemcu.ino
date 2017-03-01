@@ -174,11 +174,13 @@ void loop() {
   sensor_wifi->read_value();
 //  sensor_ds18b20->read_value();
   sensor_am2301->read_value();
+  sensor_ds1307->read_value();
+  
 
 //  Akane_Screen::getInstance().update_time(8, 10, 30);
 
    Serial.printf("Heap size: %u\n", ESP.getFreeHeap());
-  delay(1000);
+  delay(200);
 }
 
 

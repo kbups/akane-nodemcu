@@ -80,11 +80,15 @@ void Akane_Screen::print_str(const String &txt, unsigned int size, bool newline)
 }
 
 void Akane_Screen::print_str(unsigned int bg_color, String prev_str, unsigned int fg_color, String str, unsigned int size, unsigned int x, unsigned int y) {
-	tft->setTextColor(bg_color);
-	print_str(prev_str, size, x, y);
-	
-	tft->setTextColor(fg_color);
-	print_str(str, size, x, y);
+	print_str(bg_color, prev_str, fg_color, str, size, x, y, true);
+}
+
+void Akane_Screen::print_str(unsigned int bg_color, String prev_str, unsigned int fg_color, String str, unsigned int size, unsigned int x, unsigned int y, bool newline) {
+  tft->setTextColor(bg_color);
+  print_str(prev_str, size, x, y, newline);
+  
+  tft->setTextColor(fg_color);
+  print_str(str, size, x, y, newline);
 }
 
 void Akane_Screen::draw_panel(uint16_t bgcolor, int16_t x, int16_t y, int16_t w, int16_t h) {
@@ -257,15 +261,20 @@ void Akane_Screen::update_date(short day, short month, short year, short day_of_
   print_str(date, 1, 72, 77); // 15
 }
 
-void Akane_Screen::update_time(short hours, short minutes, short seconds) {
-  String time = String(hours) + ":" + String(minutes);// + ":" + String(seconds);
+void Akane_Screen::update_time(short hour, short minute, short second, short prev_hour, short prev_minute, short prev_second) {
+  String time = String(hour) + ":" + String(minute);// + ":" + String(second);
+  String prev_time = String(prev_hour) + ":" + String(prev_minute);// + ":" + String(prev_second);
   
+  tft->setTextColor(SCREEN_PANEL1_BGCOLOR);
+  tft->setFont(&Roboto_Light16pt7b); // 16
+  print_str(prev_time, 1, 72, 59, false);
+  tft->setFont(&Roboto_Light12pt7b); // 12
+  print_str(":" + String(prev_second), 1, true);
+
   tft->setTextColor(SCREEN_FGCOLOR);
-  
-  tft->setFont(&Roboto_Light16pt7b);
-  print_str(time, 1, 72, 59, false); // 22
-  
-  tft->setFont(&Roboto_Light22pt7b);
-  print_str(":" + String(seconds), 11, true);
+  tft->setFont(&Roboto_Light16pt7b); // 16
+  print_str(time, 1, 72, 59, false);
+  tft->setFont(&Roboto_Light12pt7b); // 12
+  print_str(":" + String(second), 1, true);
 }
 

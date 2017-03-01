@@ -158,6 +158,7 @@ class Akane_Screen {
 	void print_str(const String &txt, unsigned int size, unsigned int x, unsigned int y, bool newline);
     void print_str(const String &txt, unsigned int size, bool newline);
     void print_str(unsigned int bg_color, String prev_str, unsigned int fg_color, String str, unsigned int size, unsigned int x, unsigned int y);
+    void print_str(unsigned int bg_color, String prev_str, unsigned int fg_color, String str, unsigned int size, unsigned int x, unsigned int y, bool newline);
 	
     void display_wifi_status(bool is_connected, String ip_address, String prev_ip_address);
     void display_wifi_ap_status(String ip_address);
@@ -177,7 +178,7 @@ class Akane_Screen {
 	void update_light_status(bool is_active);
 	
 	void update_date(short day, short month, short year, short day_of_week);
-    void update_time(short hours, short minutes, short seconds);
+    void update_time(short hour, short minute, short second, short prev_hour, short prev_minute, short prev_second);
     
   private:
 	void display_ip_addresses(String ip_address1, String ip_address2);
