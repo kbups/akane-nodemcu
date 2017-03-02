@@ -265,12 +265,54 @@ void Akane_Screen::update_time(short hour, short minute, short second, short pre
   String time = String(hour) + ":" + String(minute);// + ":" + String(second);
   String prev_time = String(prev_hour) + ":" + String(prev_minute);// + ":" + String(prev_second);
   
-  tft->setTextColor(SCREEN_PANEL1_BGCOLOR);
+  // ---
+  /*tft->setTextColor(SCREEN_PANEL1_BGCOLOR);
   tft->setFont(&Roboto_Light16pt7b); // 16
   print_str(prev_time, 1, 72, 59, false);
   tft->setFont(&Roboto_Light12pt7b); // 12
   print_str(":" + String(prev_second), 1, true);
 
+  tft->setTextColor(SCREEN_FGCOLOR);
+  tft->setFont(&Roboto_Light16pt7b); // 16
+  print_str(time, 1, 72, 59, false);
+  tft->setFont(&Roboto_Light12pt7b); // 12
+  print_str(":" + String(second), 1, true);
+  */
+  //---
+  
+  bool hourHasChanged = hour != prev_hour;
+  bool minHasChanged = minute != prev_minute;
+  bool secHasChanged = second != prev_second;
+  
+  if(hourHasChanged) {
+	  tft->setFont(&Roboto_Light16pt7b); // 16
+	  tft->setTextColor(SCREEN_PANEL1_BGCOLOR);
+	  print_str(prev_time, 1, 72, 59, false);
+	  
+	  tft->setFont(&Roboto_Light12pt7b); // 12
+	  print_str(":" + String(prev_second), 1, true);
+  }
+  else if(minHasChanged) {
+	  tft->setFont(&Roboto_Light16pt7b); // 16
+	  tft->setTextColor(SCREEN_FGCOLOR);
+	  print_str(String(prev_hour) + ":", 1, 72, 59, false);
+	  
+	  tft->setTextColor(SCREEN_PANEL1_BGCOLOR);
+	  print_str(String(prev_minute), 1, false);
+	  
+	  tft->setFont(&Roboto_Light12pt7b); // 12
+	  print_str(":" + String(prev_second), 1, true);
+  }
+  else if(secHasChanged) {
+	  tft->setFont(&Roboto_Light16pt7b); // 16
+	  tft->setTextColor(SCREEN_FGCOLOR);
+	  print_str(prev_time, 1, 72, 59, false);
+	  
+	  tft->setTextColor(SCREEN_PANEL1_BGCOLOR);
+	  tft->setFont(&Roboto_Light12pt7b); // 12
+	  print_str(":" + String(prev_second), 1, true);
+  }
+  
   tft->setTextColor(SCREEN_FGCOLOR);
   tft->setFont(&Roboto_Light16pt7b); // 16
   print_str(time, 1, 72, 59, false);
