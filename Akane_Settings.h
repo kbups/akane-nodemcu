@@ -3,15 +3,19 @@
 
 #include <Arduino.h>
 
-#define DEBUG_AKANE 0
+#define DEBUG_AKANE 1
 #define ESP8266_PORT 80
 
 #define SERIAL_SPEED 115200
+#define UNSIGNED_LONG_MAX 4294967295
 
 // SENSORS
 #define AM2301_PIN 2    // GPIO2 / D4
 #define DS1307_SDA 4    // GPI04 / D2
 #define DS1307_SCL 5    // GPI05 / D1
+
+#define AM2301_INTERVAL 3000
+#define DS18B20_INTERVAL 3000
 
 // OUTPUTS
 #define RELAY_FAN 0

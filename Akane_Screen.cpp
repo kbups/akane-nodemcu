@@ -7,7 +7,9 @@ Akane_Screen::Akane_Screen() {
   ip_address_2 = "0.0.0.0";
 }
 
-void Akane_Screen::initialize() { 
+void Akane_Screen::initialize() {
+  prev_temp = TEMP_MAXVALUE;
+  
   tft->begin();
   tft->setRotation(TFT_ROTATE);
   
@@ -134,6 +136,11 @@ void Akane_Screen::display_ip_addresses(String ip_address1, String ip_address2) 
 /** ==============================================================================================
 TEMPERATURE
 ==============================================================================================  */
+void Akane_Screen::display_temperature(float temp) {
+  display_temperature(temp, prev_temp);
+  prev_temp = temp;
+}
+
 void Akane_Screen::display_temperature(float temp, float prev_temp) {
 	String str_prevtemp = "--";
 	if(prev_temp < TEMP_MAXVALUE) {
@@ -152,6 +159,11 @@ void Akane_Screen::display_temperature(float temp, float prev_temp) {
 /** ==============================================================================================
 HUMIDITY
 ==============================================================================================  */
+void Akane_Screen::display_humidity(float hum) {
+  display_humidity(hum, prev_hum);
+  prev_hum = hum;
+}
+
 void Akane_Screen::display_humidity(float hum, float prev_hum) {
 	String str_prevhum = "--";
 	if(prev_hum > 0 && prev_hum < 100) {
@@ -252,71 +264,90 @@ void Akane_Screen::update_light_status(bool is_active) {
 /** ==============================================================================================
 DATE and TIME
 ==============================================================================================  */
-void Akane_Screen::update_date(short day, short month, short year, short day_of_week) {
-  String date = String(day) + "/" + String(month) + "/" + String(year);
-  
-  tft->setTextColor(SCREEN_FGCOLOR);
-  
-  tft->setFont(&Roboto_Light12pt7b);
-  print_str(date, 1, 72, 77); // 15
+void Akane_Screen::update_date(short year, short month, short day, short prev_year, short prev_month, short prev_day) {
+  if(year != prev_year || month != prev_month || day != prev_day) {
+    String str_month = get_month(month);
+    String str_prev_month = get_month(prev_month);
+    
+    String prev_date = String(prev_day) + " " + str_prev_month + " " + String(prev_year);
+    String date = String(day) + " " + str_month + " " + String(year);
+
+    tft->setFont(&Roboto_Light10pt7b);
+
+    tft->setTextColor(SCREEN_PANEL1_BGCOLOR);
+    print_str(prev_date, 1, 72, 77); // 10
+    
+    tft->setTextColor(SCREEN_FGCOLOR);
+    print_str(date, 1, 72, 77); // 10
+  }
+}
+
+String Akane_Screen::get_month(short month) {
+  String str_month = "";
+  switch(month) {
+    case 1: str_month = "Jan."; break;
+    case 2: str_month = "Feb."; break;
+    case 3: str_month = "Mar."; break;
+    case 4: str_month = "Apr."; break;
+    case 5: str_month = "May"; break;
+    case 6: str_month = "Jun."; break;
+    case 7: str_month = "Jul."; break;
+    case 8: str_month = "Aug."; break;
+    case 9: str_month = "Sep."; break;
+    case 10: str_month = "Oct."; break;
+    case 11: str_month = "Nov."; break;
+    case 12: str_month = "Dec."; break;
+  }
+
+  return str_month;
 }
 
 void Akane_Screen::update_time(short hour, short minute, short second, short prev_hour, short prev_minute, short prev_second) {
-  String time = String(hour) + ":" + String(minute);// + ":" + String(second);
-  String prev_time = String(prev_hour) + ":" + String(prev_minute);// + ":" + String(prev_second);
+  String str_second = (second < 10 ? "0" : "") + String(second);
+  String str_minute = (minute < 10 ? "0" : "") + String(minute);
+  String str_hour = (hour < 10 ? "0" : "") + String(hour);
   
-  // ---
-  /*tft->setTextColor(SCREEN_PANEL1_BGCOLOR);
-  tft->setFont(&Roboto_Light16pt7b); // 16
-  print_str(prev_time, 1, 72, 59, false);
-  tft->setFont(&Roboto_Light12pt7b); // 12
-  print_str(":" + String(prev_second), 1, true);
-
-  tft->setTextColor(SCREEN_FGCOLOR);
-  tft->setFont(&Roboto_Light16pt7b); // 16
-  print_str(time, 1, 72, 59, false);
-  tft->setFont(&Roboto_Light12pt7b); // 12
-  print_str(":" + String(second), 1, true);
-  */
-  //---
+  String str_prev_second = (prev_second < 10 ? "0" : "") + String(prev_second);
+  String str_prev_minute = (prev_minute < 10 ? "0" : "") + String(prev_minute);
+  String str_prev_hour = (prev_hour < 10 ? "0" : "") + String(prev_hour);
   
   bool hourHasChanged = hour != prev_hour;
   bool minHasChanged = minute != prev_minute;
   bool secHasChanged = second != prev_second;
   
   if(hourHasChanged) {
-	  tft->setFont(&Roboto_Light16pt7b); // 16
-	  tft->setTextColor(SCREEN_PANEL1_BGCOLOR);
-	  print_str(prev_time, 1, 72, 59, false);
-	  
-	  tft->setFont(&Roboto_Light12pt7b); // 12
-	  print_str(":" + String(prev_second), 1, true);
+    tft->setFont(&Roboto_Light16pt7b); // 16
+    tft->setTextColor(SCREEN_PANEL1_BGCOLOR);
+    print_str(str_prev_hour + ":" + str_prev_minute, 1, 72, 59, false);
+    
+    tft->setFont(&Roboto_Light12pt7b); // 12
+    print_str(":" + str_prev_second, 1, true);
   }
   else if(minHasChanged) {
-	  tft->setFont(&Roboto_Light16pt7b); // 16
-	  tft->setTextColor(SCREEN_FGCOLOR);
-	  print_str(String(prev_hour) + ":", 1, 72, 59, false);
-	  
-	  tft->setTextColor(SCREEN_PANEL1_BGCOLOR);
-	  print_str(String(prev_minute), 1, false);
-	  
-	  tft->setFont(&Roboto_Light12pt7b); // 12
-	  print_str(":" + String(prev_second), 1, true);
+    tft->setFont(&Roboto_Light16pt7b); // 16
+    tft->setTextColor(SCREEN_FGCOLOR);
+    print_str(str_prev_hour + ":", 1, 72, 59, false);
+    
+    tft->setTextColor(SCREEN_PANEL1_BGCOLOR);
+    print_str(str_prev_minute, 1, false);
+    
+    tft->setFont(&Roboto_Light12pt7b); // 12
+    print_str(":" + str_prev_second, 1, true);
   }
   else if(secHasChanged) {
-	  tft->setFont(&Roboto_Light16pt7b); // 16
-	  tft->setTextColor(SCREEN_FGCOLOR);
-	  print_str(prev_time, 1, 72, 59, false);
-	  
-	  tft->setTextColor(SCREEN_PANEL1_BGCOLOR);
-	  tft->setFont(&Roboto_Light12pt7b); // 12
-	  print_str(":" + String(prev_second), 1, true);
+    tft->setFont(&Roboto_Light16pt7b); // 16
+    tft->setTextColor(SCREEN_FGCOLOR);
+    print_str(str_prev_hour + ":" + str_prev_minute, 1, 72, 59, false);
+    
+    tft->setTextColor(SCREEN_PANEL1_BGCOLOR);
+    tft->setFont(&Roboto_Light12pt7b); // 12
+    print_str(":" + str_prev_second, 1, true);
   }
   
   tft->setTextColor(SCREEN_FGCOLOR);
   tft->setFont(&Roboto_Light16pt7b); // 16
-  print_str(time, 1, 72, 59, false);
+  print_str(str_hour + ":" + str_minute, 1, 72, 59, false);
   tft->setFont(&Roboto_Light12pt7b); // 12
-  print_str(":" + String(second), 1, true);
+  print_str(":" + str_second, 1, true);
 }
 

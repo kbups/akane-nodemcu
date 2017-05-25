@@ -6,6 +6,7 @@
 #include "fonts/FreeSans6pt7b.h"
 #include "fonts/RobotoLight6pt7b.h"
 #include "fonts/RobotoLight7pt7b.h"
+#include "fonts/RobotoLight10pt7b.h"
 #include "fonts/RobotoLight12pt7b.h"
 #include "fonts/RobotoLight16pt7b.h"
 #include "fonts/RobotoLight17pt7b.h"
@@ -134,6 +135,9 @@ class Akane_Screen {
   private:
     Adafruit_ILI9341* tft;
 
+    float prev_temp;
+    float prev_hum;
+
   public:
     static Akane_Screen& getInstance() {
         static Akane_Screen instance; // Guaranteed to be destroyed.
@@ -162,8 +166,10 @@ class Akane_Screen {
 	
     void display_wifi_status(bool is_connected, String ip_address, String prev_ip_address);
     void display_wifi_ap_status(String ip_address);
-	
+
+    void display_temperature(float temp);
     void display_temperature(float temp, float prev_temp);
+    void display_humidity(float hum);
     void display_humidity(float hum, float prev_hum);
 	void display_waterlevel(float level, float prev_level);
 	void display_light(float light, float prev_light);
@@ -177,11 +183,12 @@ class Akane_Screen {
 	void update_fogger_status(bool is_active);
 	void update_light_status(bool is_active);
 	
-	void update_date(short day, short month, short year, short day_of_week);
+	void update_date(short year, short month, short day, short prev_year, short prev_month, short prev_day);
     void update_time(short hour, short minute, short second, short prev_hour, short prev_minute, short prev_second);
     
   private:
 	void display_ip_addresses(String ip_address1, String ip_address2);
+  String get_month(short month);
 };
 
 #endif
