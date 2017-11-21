@@ -51,24 +51,24 @@ void setup() {
 
   sensor_wifi = new Akane_Sensor_Wifi("Wifi");
 //  sensor_ds18b20 = new Akane_Sensor_DS18B20(DHT21_PIN, 0, "ds18b20");
-  sensor_am2301 = new Akane_Sensor_AM2301(AM2301_PIN, "AM2301");
+  //sensor_am2301 = new Akane_Sensor_AM2301(AM2301_PIN, "AM2301");
   sensor_ds1307 = new Akane_Sensor_DS1307("DS1307");
 
   observer_wifi = new Akane_Observer_Wifi(true);
   observer_mqtt = new Akane_Observer_MQTT();
   sensor_wifi->addObserver(*observer_wifi);
   
-  relay_fan = new Akane_Relay_Fan(15, MIN_FAN_CHANGE_DELAY);
-  relay_heater = new Akane_Relay_Heater(0, MIN_HEATER_CHANGE_DELAY);
-  relay_hum = new Akane_Relay_Hum(0, 15000, 60000);
-  observer_temp = new Akane_Observer_Temp();
-  observer_hum = new Akane_Observer_Hum();
+  //relay_fan = new Akane_Relay_Fan(15, MIN_FAN_CHANGE_DELAY);
+  //relay_heater = new Akane_Relay_Heater(0, MIN_HEATER_CHANGE_DELAY);
+  //relay_hum = new Akane_Relay_Hum(0, 15000, 60000);
+  //observer_temp = new Akane_Observer_Temp();
+  //observer_hum = new Akane_Observer_Hum();
   observer_datetime = new Akane_Observer_DateTime();
   ///*sensor_am2301*/observer_mqtt->addObserver(*observer_temp);
   ///*sensor_am2301*/observer_mqtt->addObserver(*observer_hum);
-  sensor_am2301->addObserver(*relay_fan);
-  sensor_am2301->addObserver(*relay_heater);
-  sensor_am2301->addObserver(*relay_hum);
+  //sensor_am2301->addObserver(*relay_fan);
+  //sensor_am2301->addObserver(*relay_heater);
+  //sensor_am2301->addObserver(*relay_hum);
   sensor_ds1307->addObserver(*observer_datetime);
 
 //  Akane_Sensor* sensors[1] = { sensor_ds18b20 }; //sensors[0] = sensor_ds18b20;
@@ -81,7 +81,7 @@ void loop() {
   // put your main code here, to run repeatedly:
   sensor_wifi->read_value();
 //  sensor_ds18b20->read_value();
-  sensor_am2301->read_value();
+  //sensor_am2301->read_value();
   sensor_ds1307->read_value();
   observer_mqtt->read_value();
 

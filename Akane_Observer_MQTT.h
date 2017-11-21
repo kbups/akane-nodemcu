@@ -42,7 +42,7 @@ class Akane_Observer_MQTT : public Akane_Sensor {
     };*/
 
     inline static void mqtt_callback(char* topic, byte* payload, unsigned int length) {
-      Akane_Logger::log("[Akane_Observer_Wifi][mqtt_callback] Message arrived / Topic: " + String(topic));
+      Akane_Logger::log("[Akane_Observer_MQTT][mqtt_callback] Message arrived / Topic: " + String(topic));
 
       String str_payload = "";
       for (int i = 0; i < length; i++) {
@@ -50,9 +50,18 @@ class Akane_Observer_MQTT : public Akane_Sensor {
       }
       
       Akane_Logger::log("[Akane_Observer_MQTT][mqtt_callback] Payload: " + str_payload);
-    
+
+      // SENSORS
       // /home/akane/humidity
       // /home/akane/temperature
+      // /home/akane/waterlevel
+      // /home/akane/light
+
+      // RELAYS
+      // /home/akane/heater
+      // /home/akane/fan
+      // /home/akane/misting
+      // /home/akane/fogger
 
       String str_topic = String(topic);
 
@@ -64,6 +73,75 @@ class Akane_Observer_MQTT : public Akane_Sensor {
         float res_h = str_payload.toFloat();
         Akane_Screen::getInstance().display_humidity(res_h);
       }
+      else if(str_topic.equals("/home/akane/waterlevel")) {
+        float res_w = str_payload.toFloat();
+        Akane_Screen::getInstance().display_waterlevel(res_w);
+      }
+      else if(str_topic.equals("/home/akane/light")) {
+        float res_l = str_payload.toFloat();
+        Akane_Screen::getInstance().display_light(res_l);
+      }
+      else if(str_topic.equals("/home/akane/relays")) {
+        // Payload: {"distance":5.1000000000000005,"relay":"3:ON","MCP23017":12,"relays":{"2":"ON","3":"ON"}}
+        int idx1 = str_payload.indexOf("relays");
+        if(idx1 > -1) {
+          int idx2 = str_payload.indexOf("}", idx1);
+          if(idx2 > -1) {
+            String relays_str = str_payload.substring(idx1 + 9, idx2);
+            Akane_Logger::log("[Akane_Observer_MQTT][mqtt_callback] Relays: " + relays_str);
+            
+            int idxr1;
+            int idxr2;
+            String status;
+            if(relays_str.indexOf("0") > -1) {
+              idxr1 = relays_str.indexOf("0") + 4;
+              idxr2 = relays_str.indexOf("\"", idxr1);
+              status = relays_str.substring(idxr1, idxr2);
+
+              Akane_Logger::log("[Akane_Observer_MQTT][mqtt_callback] Relay HEATER: " + status);
+              Akane_Screen::getInstance().update_heater_status(status == "ON");
+            }
+            if(relays_str.indexOf("1") > -1) {
+              idxr1 = relays_str.indexOf("1") + 4;
+              idxr2 = relays_str.indexOf("\"", idxr1);
+              status = relays_str.substring(idxr1, idxr2);
+
+              Akane_Logger::log("[Akane_Observer_MQTT][mqtt_callback] Relay FAN: " + status);
+              Akane_Screen::getInstance().update_fan_status(status == "ON");
+            }
+            if(relays_str.indexOf("2") > -1) {
+              idxr1 = relays_str.indexOf("2") + 4;
+              idxr2 = relays_str.indexOf("\"", idxr1);
+              status = relays_str.substring(idxr1, idxr2);
+              
+              Akane_Logger::log("[Akane_Observer_MQTT][mqtt_callback] Relay FOGGER: " + status);
+              Akane_Screen::getInstance().update_fogger_status(status == "ON");
+            }
+            if(relays_str.indexOf("3") > -1) {
+              idxr1 = relays_str.indexOf("3") + 4;
+              idxr2 = relays_str.indexOf("\"", idxr1);
+              status = relays_str.substring(idxr1, idxr2);
+
+              Akane_Logger::log("[Akane_Observer_MQTT][mqtt_callback] Relay MISTING: " + status);
+              Akane_Screen::getInstance().update_misting_status(status == "ON");
+            }
+            if(relays_str.indexOf("4") > -1) {
+              idxr1 = relays_str.indexOf("4") + 4;
+              idxr2 = relays_str.indexOf("\"", idxr1);
+              status = relays_str.substring(idxr1, idxr2);
+
+              Akane_Logger::log("[Akane_Observer_MQTT][mqtt_callback] Relay LIGHT: " + status);
+              Akane_Screen::getInstance().update_light_status(status == "ON");
+            }
+          }
+        }
+        
+        /*bool res_ht = str_payload == "1" || str_payload == "ON";
+        Akane_Screen::getInstance().update_heater_status(res_ht);
+        Akane_Screen::getInstance().update_fan_status(res_ht);
+        Akane_Screen::getInstance().update_misting_status(res_ht);
+        Akane_Screen::getInstance().update_fogger_status(res_ht);*/
+      }
     };
 
     inline void reconnect() {
@@ -73,7 +151,12 @@ class Akane_Observer_MQTT : public Akane_Sensor {
         // Attempt to connect
         if (client->connect("ESP8266Client")) {
           Akane_Logger::log("[Akane_Observer_MQTT][mqtt_callback] Connected!");
+
+          Akane_Logger::log("[Akane_Observer_MQTT][mqtt_callback] Subscribe to /home/# subjects");
           client->subscribe("/home/#");
+
+          Akane_Logger::log("[Akane_Observer_MQTT][mqtt_callback] Telling the server everything is ok...");
+          client->publish("/home/akane/initialize", "HELO");
         } else {
           Akane_Logger::log("[Akane_Observer_MQTT][mqtt_callback] Failed, rc=" + String(client->state()) + ". Try again in 5 seconds");
           // Wait 5 seconds before retrying

@@ -137,6 +137,8 @@ class Akane_Screen {
 
     float prev_temp;
     float prev_hum;
+    float prev_waterlevel;
+    float prev_light;
 
   public:
     static Akane_Screen& getInstance() {
@@ -151,15 +153,15 @@ class Akane_Screen {
     void operator=(Akane_Screen const&); // Don't implement
 
     bool wifi_ap_displayed;
-	String ip_address_1;
-	String ip_address_2;
+	  String ip_address_1;
+	  String ip_address_2;
 
   public:
     void initialize();
     void draw_panel(uint16_t bgcolor, int16_t x, int16_t y, int16_t w, int16_t h);
     
-	void print_str(const String &txt, unsigned int size, unsigned int x, unsigned int y);
-	void print_str(const String &txt, unsigned int size, unsigned int x, unsigned int y, bool newline);
+	  void print_str(const String &txt, unsigned int size, unsigned int x, unsigned int y);
+	  void print_str(const String &txt, unsigned int size, unsigned int x, unsigned int y, bool newline);
     void print_str(const String &txt, unsigned int size, bool newline);
     void print_str(unsigned int bg_color, String prev_str, unsigned int fg_color, String str, unsigned int size, unsigned int x, unsigned int y);
     void print_str(unsigned int bg_color, String prev_str, unsigned int fg_color, String str, unsigned int size, unsigned int x, unsigned int y, bool newline);
@@ -171,8 +173,10 @@ class Akane_Screen {
     void display_temperature(float temp, float prev_temp);
     void display_humidity(float hum);
     void display_humidity(float hum, float prev_hum);
-	void display_waterlevel(float level, float prev_level);
-	void display_light(float light, float prev_light);
+    void display_waterlevel(float level);
+    void display_waterlevel(float level, float prev_level);
+    void display_light(float light);
+	  void display_light(float light, float prev_light);
 	
     void update_heater_status(bool is_active);
     void update_heater_info(float val);
@@ -180,10 +184,10 @@ class Akane_Screen {
     void update_fan_info(float val);
     void update_misting_status(bool is_active);
     void update_misting_info(float val);
-	void update_fogger_status(bool is_active);
-	void update_light_status(bool is_active);
+	  void update_fogger_status(bool is_active);
+	  void update_light_status(bool is_active);
 	
-	void update_date(short year, short month, short day, short prev_year, short prev_month, short prev_day);
+	  void update_date(short year, short month, short day, short prev_year, short prev_month, short prev_day);
     void update_time(short hour, short minute, short second, short prev_hour, short prev_minute, short prev_second);
     
   private:

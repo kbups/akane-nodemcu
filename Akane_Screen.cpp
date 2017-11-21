@@ -182,6 +182,11 @@ void Akane_Screen::display_humidity(float hum, float prev_hum) {
 /** ==============================================================================================
 WATER LEVEL
 ==============================================================================================  */
+void Akane_Screen::display_waterlevel(float level) {
+  display_waterlevel(level, prev_waterlevel);
+  prev_waterlevel = level;
+}
+
 void Akane_Screen::display_waterlevel(float level, float prev_level) {
 	String str_prevlevel = "--";
 	if(prev_level > 0 && prev_level < 1000) {
@@ -200,6 +205,11 @@ void Akane_Screen::display_waterlevel(float level, float prev_level) {
 /** ==============================================================================================
 LIGHT
 ==============================================================================================  */
+void Akane_Screen::display_light(float light) {
+  display_light(light, prev_light);
+  prev_light = light;
+}
+
 void Akane_Screen::display_light(float light, float prev_light) {
 	String str_prevlight = "--";
 	if(prev_light >= 0 && prev_light <= 100) {
