@@ -12,9 +12,16 @@ class Akane_Sensor_Wifi : public Akane_Sensor {
     
   public:
     Akane_Sensor_Wifi() : Akane_Sensor_Wifi("WIFI") { };
-    Akane_Sensor_Wifi(String name) : Akane_Sensor(name) { };
+    Akane_Sensor_Wifi(String name) : Akane_Sensor(name, 0) { };
     
-    virtual void read_value();
+    inline virtual void read_value() {
+      Akane_Logger::log("[Akane_Sensor_Wifi] Reading Wifi status...");
+    
+      uint8_t res = WiFi.status();
+      
+      this->value = (float) res;
+      Akane_Sensor::read_value(); // notify observers;
+    };
 };
 
 #endif

@@ -60,11 +60,14 @@ class Akane_Settings {
         static Akane_Settings instance; // Guaranteed to be destroyed.
                                         // Instantiated on first use.
         return instance;
-    }
-    Akane_Settings();
-    //Akane_Settings(const char* pssid, const char* pssid_pwd);
+    };
+    
+    Akane_Settings() { };
 
-    void initialize(const char* pssid, const char* pssid_pwd);
+    inline void initialize(const char* pssid, const char* pssid_pwd) { 
+      ssid = (char *)pssid;
+      ssid_pwd = (char *)pssid_pwd;
+    };
     
     char* get_ssid() { return ssid; };
     void set_ssid(char* pSsid) { ssid = pSsid; };
@@ -81,8 +84,15 @@ class Akane_Settings {
     float get_hum_instruction() { return hum_instruction; };
     void set_hum_instruction(float pValue) { hum_instruction = pValue; };
     
-    void load();
-    void save();
+    inline void load() {
+      set_ssid("Livebox-NFP");
+      set_ssid_pwd("AD5919656EA749C372132E633D");
+      
+      set_fan_instruction(22);
+      set_heater_instruction(22);
+      set_hum_instruction(22);//70);
+    };
+    inline void save() { };
     
   private:
     Akane_Settings(Akane_Settings const&);   // Don't Implement

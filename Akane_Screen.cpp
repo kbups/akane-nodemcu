@@ -27,29 +27,6 @@ void Akane_Screen::initialize() {
   draw_panel(SCREEN_PANEL3_BGCOLOR, 120, 88, 120, 60);
   draw_panel(SCREEN_PANEL4_BGCOLOR, 0, 148, 120, 60);
   draw_panel(SCREEN_PANEL5_BGCOLOR, 120, 148, 120, 60);
-  
-  // Relays
-  tft->setFont(&FreeSans6pt7b);
-  
-  tft->setTextColor(SCREEN_RELAY_FGHEATER);
-  print_str("HEATER", 1, 17, 304);
-  update_heater_status(false);
-  
-  tft->setTextColor(SCREEN_RELAY_FGFAN);
-  print_str("FAN", 1, 17, 316);
-  update_fan_status(false);
-
-  tft->setTextColor(SCREEN_RELAY_FGMISTING);
-  print_str("MISTING", 1, 104, 304);
-  update_misting_status(false);
-  
-  tft->setTextColor(SCREEN_RELAY_FGFOGGER);
-  print_str("FOGGER", 1, 104, 316);
-  update_fogger_status(false);
-  
-  tft->setTextColor(SCREEN_RELAY_FGLIGHT);
-  print_str("LIGHT", 1, 196, 304);
-  update_light_status(false);
 
   // Icons
   tft->drawXBitmap(25, 38, days_bits, 40, 40, SCREEN_FGCOLOR);
@@ -57,6 +34,35 @@ void Akane_Screen::initialize() {
   tft->drawXBitmap(129, 98, drop_bits, 40, 40, SCREEN_FGCOLOR);
   tft->drawXBitmap(10, 159, water_bits, 40, 40, SCREEN_FGCOLOR);
   tft->drawXBitmap(130, 159, sun_bits, 40, 40, SCREEN_FGCOLOR);
+
+  // Relays
+  tft->setFont(&Roboto_Light7pt7b);
+  tft->setTextColor(SCREEN_FGCOLOR);
+  
+  // Heater
+  tft->drawXBitmap(10, 220, switch_off_bits, 38, 20, SCREEN_RELAYDEACTIVATED);
+  tft->drawXBitmap(10, 220, switch_bg_off_bits, 38, 20, SCREEN_FGCOLOR);
+  print_str("Heater", 1, 60, 235);
+
+  // Misting
+  tft->drawXBitmap(10, 245, switch_off_bits, 38, 20, SCREEN_RELAYDEACTIVATED);
+  tft->drawXBitmap(10, 245, switch_bg_off_bits, 38, 20, SCREEN_FGCOLOR);
+  print_str("Misting", 1, 60, 260);
+
+  // Light
+  tft->drawXBitmap(10, 270, switch_off_bits, 38, 20, SCREEN_RELAYDEACTIVATED);
+  tft->drawXBitmap(10, 270, switch_bg_off_bits, 38, 20, SCREEN_FGCOLOR);
+  print_str("Light", 1, 60, 285);
+
+  // Fan
+  tft->drawXBitmap(130, 220, switch_off_bits, 38, 20, SCREEN_RELAYDEACTIVATED);
+  tft->drawXBitmap(130, 220, switch_bg_off_bits, 38, 20, SCREEN_FGCOLOR);
+  print_str("Fan", 1, 180, 235);
+
+  // Fogger
+  tft->drawXBitmap(130, 245, switch_off_bits, 38, 20, SCREEN_RELAYDEACTIVATED);
+  tft->drawXBitmap(130, 245, switch_bg_off_bits, 38, 20, SCREEN_FGCOLOR);
+  print_str("Fogger", 1, 180, 260);
 }
 
 /** ==============================================================================================
@@ -228,47 +234,46 @@ void Akane_Screen::display_light(float light, float prev_light) {
 /** ==============================================================================================
 RELAYS
 ==============================================================================================  */
+void Akane_Screen::update_relay_status(bool is_active, unsigned int x, unsigned int y, unsigned int color) {
+  tft->fillRect(x, y, 38, 20, SCREEN_BGCOLOR);
+
+  if(is_active) {
+    tft->drawXBitmap(x, y, switch_on_bits, 38, 20, color);
+    tft->drawXBitmap(x, y, switch_bg_on_bits, 38, 20, SCREEN_FGCOLOR);  
+  }
+  else  {
+    tft->drawXBitmap(x, y, switch_off_bits, 38, 20, SCREEN_RELAYDEACTIVATED);
+    tft->drawXBitmap(x, y, switch_bg_off_bits, 38, 20, SCREEN_FGCOLOR);  
+  }
+}
+
 void Akane_Screen::update_heater_status(bool is_active) {
-  unsigned int color = is_active ? SCREEN_RELAYACTIVATED : SCREEN_RELAYDEACTIVATED;
-  tft->fillRect(4, 296, 9, 9, color);
+  update_relay_status(is_active, 10, 220, SCREEN_PANEL2_BGCOLOR);
 }
 
 void Akane_Screen::update_heater_info(float val) {
-  /*tft->fillRect(121, 268, 118, 24, SCREEN_BGCOLOR);
-  set_foregroundcolor(SCREEN_PANEL1COLOR);
-  print_str(String(val), 1, 130, 286);*/
 }
 
 void Akane_Screen::update_fan_status(bool is_active) {
-  unsigned int color = is_active ? SCREEN_RELAYACTIVATED : SCREEN_RELAYDEACTIVATED;
-  tft->fillRect(4, 308, 9, 9, color);
+  update_relay_status(is_active, 130, 220, SCREEN_PANEL2_BGCOLOR);
 }
 
 void Akane_Screen::update_fan_info(float val) {
-  /*tft->fillRect(121, 294, 118, 24, SCREEN_BGCOLOR);
-  set_foregroundcolor(SCREEN_PANEL1COLOR);
-  print_str(String(val), 1, 130, 312);*/
 }
 
 void Akane_Screen::update_misting_status(bool is_active) {
-  unsigned int color = is_active ? SCREEN_RELAYACTIVATED : SCREEN_RELAYDEACTIVATED;
-  tft->fillRect(91, 296, 9, 9, color);
+  update_relay_status(is_active, 10, 245, SCREEN_PANEL3_BGCOLOR);
 }
 
 void Akane_Screen::update_misting_info(float val) {
-  /*tft->fillRect(121, 242, 118, 24, SCREEN_BGCOLOR);
-  set_foregroundcolor(SCREEN_PANEL1COLOR);
-  print_str(String(val), 1, 130, 260);*/
 }
 
 void Akane_Screen::update_fogger_status(bool is_active) {
-  unsigned int color = is_active ? SCREEN_RELAYACTIVATED : SCREEN_RELAYDEACTIVATED;
-  tft->fillRect(91, 308, 9, 9, color);
+  update_relay_status(is_active, 130, 245, SCREEN_PANEL3_BGCOLOR);
 }
 
 void Akane_Screen::update_light_status(bool is_active) {
-  unsigned int color = is_active ? SCREEN_RELAYACTIVATED : SCREEN_RELAYDEACTIVATED;
-  tft->fillRect(183, 296, 9, 9, color);
+  update_relay_status(is_active, 10, 270, SCREEN_PANEL5_BGCOLOR);
 }
 
 /** ==============================================================================================

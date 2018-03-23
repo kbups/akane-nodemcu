@@ -22,7 +22,7 @@ class Akane_Sensor_DS1307 : public Akane_Sensor {
     
   public:
     Akane_Sensor_DS1307() : Akane_Sensor_DS1307("DS1307") { };
-    Akane_Sensor_DS1307(String name) : Akane_Sensor(name) { 
+    Akane_Sensor_DS1307(String name) : Akane_Sensor(name, 0) { 
       this->nbvalues = 3;
 
       rtc.Begin();
@@ -43,7 +43,8 @@ class Akane_Sensor_DS1307 : public Akane_Sensor {
         // it will also reset the valid flag internally unless the Rtc device is
         // having an issue
 
-        rtc.SetDateTime(compiled);
+        //rtc.SetDateTime(compiled);
+        set_datetime(compiled);
       }
 
       if (!rtc.GetIsRunning()) {
@@ -66,6 +67,14 @@ class Akane_Sensor_DS1307 : public Akane_Sensor {
       // never assume the Rtc was last configured by you, so
       // just clear them to your needed state
       rtc.SetSquareWavePin(DS1307SquareWaveOut_Low); 
+    };
+
+    void set_datetime(RtcDateTime dt_value) {
+      if(dt_value) {
+        Akane_Logger::log("[Akane_Sensor_DS1307] Updating the datetime...");
+        rtc.SetDateTime(dt_value);
+        printDateTime(dt_value);
+      }
     };
     
     virtual void read_value() {
@@ -102,7 +111,7 @@ class Akane_Sensor_DS1307 : public Akane_Sensor {
         dt.Minute(),
         dt.Second());
 
-      Akane_Logger::log("[Akane_Sensor_AM2301] DateTime = " + String(datestring));
+      Akane_Logger::log("[Akane_Sensor_DS1307] DateTime = " + String(datestring));
     };
 };
 

@@ -7,6 +7,7 @@
 
 #include "Akane_Settings.h"
 #include "Akane_Logger.h"
+#include "Akane_Sensor_DS1307.h"
 #include "Observer.h"
 
 class Akane_Observer_MQTT : public Akane_Sensor {
@@ -93,7 +94,7 @@ class Akane_Observer_MQTT : public Akane_Sensor {
             int idxr1;
             int idxr2;
             String status;
-            if(relays_str.indexOf("0") > -1) {
+            if(relays_str.indexOf("0") > -1) { // HEATER
               idxr1 = relays_str.indexOf("0") + 4;
               idxr2 = relays_str.indexOf("\"", idxr1);
               status = relays_str.substring(idxr1, idxr2);
@@ -101,7 +102,7 @@ class Akane_Observer_MQTT : public Akane_Sensor {
               Akane_Logger::log("[Akane_Observer_MQTT][mqtt_callback] Relay HEATER: " + status);
               Akane_Screen::getInstance().update_heater_status(status == "ON");
             }
-            if(relays_str.indexOf("1") > -1) {
+            if(relays_str.indexOf("1") > -1) { // FAN
               idxr1 = relays_str.indexOf("1") + 4;
               idxr2 = relays_str.indexOf("\"", idxr1);
               status = relays_str.substring(idxr1, idxr2);
@@ -109,7 +110,7 @@ class Akane_Observer_MQTT : public Akane_Sensor {
               Akane_Logger::log("[Akane_Observer_MQTT][mqtt_callback] Relay FAN: " + status);
               Akane_Screen::getInstance().update_fan_status(status == "ON");
             }
-            if(relays_str.indexOf("2") > -1) {
+            if(relays_str.indexOf("2") > -1) { // FOGGER
               idxr1 = relays_str.indexOf("2") + 4;
               idxr2 = relays_str.indexOf("\"", idxr1);
               status = relays_str.substring(idxr1, idxr2);
@@ -117,7 +118,7 @@ class Akane_Observer_MQTT : public Akane_Sensor {
               Akane_Logger::log("[Akane_Observer_MQTT][mqtt_callback] Relay FOGGER: " + status);
               Akane_Screen::getInstance().update_fogger_status(status == "ON");
             }
-            if(relays_str.indexOf("3") > -1) {
+            if(relays_str.indexOf("3") > -1) { // MISTING
               idxr1 = relays_str.indexOf("3") + 4;
               idxr2 = relays_str.indexOf("\"", idxr1);
               status = relays_str.substring(idxr1, idxr2);
@@ -125,7 +126,7 @@ class Akane_Observer_MQTT : public Akane_Sensor {
               Akane_Logger::log("[Akane_Observer_MQTT][mqtt_callback] Relay MISTING: " + status);
               Akane_Screen::getInstance().update_misting_status(status == "ON");
             }
-            if(relays_str.indexOf("4") > -1) {
+            if(relays_str.indexOf("4") > -1) { // LIGHT
               idxr1 = relays_str.indexOf("4") + 4;
               idxr2 = relays_str.indexOf("\"", idxr1);
               status = relays_str.substring(idxr1, idxr2);
@@ -135,12 +136,25 @@ class Akane_Observer_MQTT : public Akane_Sensor {
             }
           }
         }
+      }
+      else if(str_topic.equals("/home/akane/time")) {
+        Akane_Logger::log("[Akane_Observer_MQTT][TEST]");
+        uint16_t dt_y = str_payload.substring(0, 4).toInt();
+        Akane_Logger::log("[Akane_Observer_MQTT][TEST] Year: " + String(dt_y));
         
-        /*bool res_ht = str_payload == "1" || str_payload == "ON";
-        Akane_Screen::getInstance().update_heater_status(res_ht);
-        Akane_Screen::getInstance().update_fan_status(res_ht);
-        Akane_Screen::getInstance().update_misting_status(res_ht);
-        Akane_Screen::getInstance().update_fogger_status(res_ht);*/
+        uint8_t dt_m = str_payload.substring(5, 7).toInt();
+        Akane_Logger::log("[Akane_Observer_MQTT][TEST] Month: " + String(dt_m));
+        uint8_t dt_d = str_payload.substring(8, 10).toInt();
+        Akane_Logger::log("[Akane_Observer_MQTT][TEST] Day: " + String(dt_d));
+        uint8_t t_h  = str_payload.substring(11, 13).toInt();
+        Akane_Logger::log("[Akane_Observer_MQTT][TEST] Hour: " + String(t_h));
+        uint8_t t_m  = str_payload.substring(14, 16).toInt();
+        Akane_Logger::log("[Akane_Observer_MQTT][TEST] Min: " + String(t_m));
+        uint8_t t_s  = str_payload.substring(17, 19).toInt();
+        Akane_Logger::log("[Akane_Observer_MQTT][TEST] Sec: " + String(t_s));
+
+        Akane_Sensor_DS1307 * ds1307 = new Akane_Sensor_DS1307("DS1307");
+        ds1307->set_datetime(RtcDateTime(dt_y, dt_m, dt_d, t_h, t_m, t_s));
       }
     };
 
@@ -171,7 +185,7 @@ class Akane_Observer_MQTT : public Akane_Sensor {
         reconnect();
       }
       client->loop();
-    }
+    };
 };
 
 #endif

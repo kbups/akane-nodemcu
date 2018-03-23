@@ -7,9 +7,14 @@
 class Akane_Logger {
 
   public:
-    static void initialize();
-    static void log(const String &msg);
-  
+    inline static void initialize() {
+      Serial.begin(SERIAL_BAUD_RATE);
+    };
+    
+    static void log(const String &msg) {
+      if(DEBUG_AKANE == 1)
+        Serial.println(msg);
+    };
 };
 
 #endif
