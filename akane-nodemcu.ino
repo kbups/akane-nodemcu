@@ -14,7 +14,6 @@
 #include "Akane_Observer_MQTT.h"
 #include "Akane_Observer_DateTime.h"
 
-//Akane_Settings* settings;
 Akane_Sensor_Wifi* sensor_wifi;
 Akane_Sensor_DS1307* sensor_ds1307;
 Akane_Observer_Wifi* observer_wifi;
@@ -34,9 +33,9 @@ void setup() {
 
   observer_wifi = new Akane_Observer_Wifi(true);
   observer_mqtt = new Akane_Observer_MQTT();
-  sensor_wifi->addObserver(*observer_wifi);
-  
   observer_datetime = new Akane_Observer_DateTime();
+  
+  sensor_wifi->addObserver(*observer_wifi);
   sensor_ds1307->addObserver(*observer_datetime);
 }
 
@@ -46,7 +45,7 @@ void loop() {
   observer_mqtt->read_value();
   
   Serial.printf("Heap size: %u\n", ESP.getFreeHeap());
-  delay(300);
+  delay(250);
 }
 
 

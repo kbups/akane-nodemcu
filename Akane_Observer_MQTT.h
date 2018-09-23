@@ -19,7 +19,15 @@ class Akane_Observer_MQTT : public Akane_Sensor {
     Akane_Observer_MQTT() : Akane_Sensor("MQTT", 0) {
       client = new PubSubClient(espClient);
 
-      client->setServer("192.168.1.50", 1883);
+      IPAddress addr;
+      if (addr.fromString(Akane_Settings::getInstance().get_mqtt_address())) {
+        Akane_Logger::log("[Akane_Observer_MQTT][Akane_Sensor] MQTT Server IP is valid");
+      }
+      else {
+        Akane_Logger::log("[Akane_Observer_MQTT][Akane_Sensor] Invalid MQTT Server IP!");
+      }
+      Akane_Logger::log("[Akane_Observer_MQTT][Akane_Sensor] MQTT Server: " + Akane_Settings::getInstance().get_mqtt_address());
+      client->setServer(addr, MQTT_PORT);
       client->setCallback(&Akane_Observer_MQTT::mqtt_callback);
     };
     /*
@@ -138,21 +146,14 @@ class Akane_Observer_MQTT : public Akane_Sensor {
         }
       }
       else if(str_topic.equals("/home/akane/time")) {
-        Akane_Logger::log("[Akane_Observer_MQTT][TEST]");
         uint16_t dt_y = str_payload.substring(0, 4).toInt();
-        Akane_Logger::log("[Akane_Observer_MQTT][TEST] Year: " + String(dt_y));
         
         uint8_t dt_m = str_payload.substring(5, 7).toInt();
-        Akane_Logger::log("[Akane_Observer_MQTT][TEST] Month: " + String(dt_m));
         uint8_t dt_d = str_payload.substring(8, 10).toInt();
-        Akane_Logger::log("[Akane_Observer_MQTT][TEST] Day: " + String(dt_d));
         uint8_t t_h  = str_payload.substring(11, 13).toInt();
-        Akane_Logger::log("[Akane_Observer_MQTT][TEST] Hour: " + String(t_h));
         uint8_t t_m  = str_payload.substring(14, 16).toInt();
-        Akane_Logger::log("[Akane_Observer_MQTT][TEST] Min: " + String(t_m));
         uint8_t t_s  = str_payload.substring(17, 19).toInt();
-        Akane_Logger::log("[Akane_Observer_MQTT][TEST] Sec: " + String(t_s));
-
+        
         Akane_Sensor_DS1307 * ds1307 = new Akane_Sensor_DS1307("DS1307");
         ds1307->set_datetime(RtcDateTime(dt_y, dt_m, dt_d, t_h, t_m, t_s));
       }
@@ -160,8 +161,9 @@ class Akane_Observer_MQTT : public Akane_Sensor {
 
     inline void reconnect() {
       // Loop until we're reconnected
-      while (!client->connected()) {
-        Akane_Logger::log("[Akane_Observer_MQTT][mqtt_callback] Attempting MQTT connection...");
+      unsigned int counter = 0;
+      while (!client->connected() && counter < 3) {
+        Akane_Logger::log("[Akane_Observer_MQTT][mqtt_callback] Attempting MQTT connection #" + String(counter) + "...");
         // Attempt to connect
         if (client->connect("ESP8266Client")) {
           Akane_Logger::log("[Akane_Observer_MQTT][mqtt_callback] Connected!");
@@ -172,10 +174,11 @@ class Akane_Observer_MQTT : public Akane_Sensor {
           Akane_Logger::log("[Akane_Observer_MQTT][mqtt_callback] Telling the server everything is ok...");
           client->publish("/home/akane/initialize", "HELO");
         } else {
-          Akane_Logger::log("[Akane_Observer_MQTT][mqtt_callback] Failed, rc=" + String(client->state()) + ". Try again in 5 seconds");
-          // Wait 5 seconds before retrying
-          delay(5000);
+          Akane_Logger::log("[Akane_Observer_MQTT][mqtt_callback] Failed, rc=" + String(client->state()) + ". Try again in 2 seconds");
+          // Wait 2 seconds before retrying
+          delay(2000);
         }
+        counter++;
       }
     };
 

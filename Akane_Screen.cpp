@@ -19,7 +19,7 @@ void Akane_Screen::initialize() {
   // Title
   tft->setFont(&Roboto_Light7pt7b);
   tft->setTextColor(SCREEN_TITLECOLOR);
-  print_str("Akane", 1, 7, 18);
+  print_str(Akane_Settings::getInstance().get_hostname(), 1, 7, 18);
   
   // Panels
   draw_panel(SCREEN_PANEL1_BGCOLOR, 0, 28, 240, 60);
@@ -40,28 +40,23 @@ void Akane_Screen::initialize() {
   tft->setTextColor(SCREEN_FGCOLOR);
   
   // Heater
-  tft->drawXBitmap(10, 220, switch_off_bits, 38, 20, SCREEN_RELAYDEACTIVATED);
-  tft->drawXBitmap(10, 220, switch_bg_off_bits, 38, 20, SCREEN_FGCOLOR);
+  update_heater_status(false);
   print_str("Heater", 1, 60, 235);
 
   // Misting
-  tft->drawXBitmap(10, 245, switch_off_bits, 38, 20, SCREEN_RELAYDEACTIVATED);
-  tft->drawXBitmap(10, 245, switch_bg_off_bits, 38, 20, SCREEN_FGCOLOR);
+  update_misting_status(false);
   print_str("Misting", 1, 60, 260);
 
   // Light
-  tft->drawXBitmap(10, 270, switch_off_bits, 38, 20, SCREEN_RELAYDEACTIVATED);
-  tft->drawXBitmap(10, 270, switch_bg_off_bits, 38, 20, SCREEN_FGCOLOR);
+  update_light_status(false);
   print_str("Light", 1, 60, 285);
 
   // Fan
-  tft->drawXBitmap(130, 220, switch_off_bits, 38, 20, SCREEN_RELAYDEACTIVATED);
-  tft->drawXBitmap(130, 220, switch_bg_off_bits, 38, 20, SCREEN_FGCOLOR);
+  update_fan_status(false);
   print_str("Fan", 1, 180, 235);
 
   // Fogger
-  tft->drawXBitmap(130, 245, switch_off_bits, 38, 20, SCREEN_RELAYDEACTIVATED);
-  tft->drawXBitmap(130, 245, switch_bg_off_bits, 38, 20, SCREEN_FGCOLOR);
+  update_fogger_status(false);
   print_str("Fogger", 1, 180, 260);
 }
 
@@ -196,12 +191,12 @@ void Akane_Screen::display_waterlevel(float level) {
 void Akane_Screen::display_waterlevel(float level, float prev_level) {
 	String str_prevlevel = "--";
 	if(prev_level > 0 && prev_level < 1000) {
-		str_prevlevel = String(prev_level, 1);
+		str_prevlevel = String(prev_level, prev_level >= 100 ? 0 : 1);
 	}
 	
 	String str_level = "--";
 	if(level > 0 && level < 1000) {
-		str_level = String(level, 1);
+		str_level = String(level, level >= 100 ? 0 : 1);
 	}
 	
 	tft->setFont(&Roboto_Light17pt7b);
@@ -219,12 +214,12 @@ void Akane_Screen::display_light(float light) {
 void Akane_Screen::display_light(float light, float prev_light) {
 	String str_prevlight = "--";
 	if(prev_light >= 0 && prev_light <= 100) {
-		str_prevlight = String(prev_light, 1);
+		str_prevlight = String(prev_light, prev_light == 100 ? 0 : 1);
 	}
 	
 	String str_light = "--";
 	if(light >= 0 && light <= 100) {
-		str_light = String(light, 1);
+		str_light = String(light, light == 100 ? 0 : 1);
 	}
 	
 	tft->setFont(&Roboto_Light17pt7b);
@@ -235,15 +230,15 @@ void Akane_Screen::display_light(float light, float prev_light) {
 RELAYS
 ==============================================================================================  */
 void Akane_Screen::update_relay_status(bool is_active, unsigned int x, unsigned int y, unsigned int color) {
-  tft->fillRect(x, y, 38, 20, SCREEN_BGCOLOR);
+  tft->fillRect(x, y, 40, 20, SCREEN_BGCOLOR);
 
   if(is_active) {
-    tft->drawXBitmap(x, y, switch_on_bits, 38, 20, color);
-    tft->drawXBitmap(x, y, switch_bg_on_bits, 38, 20, SCREEN_FGCOLOR);  
+    tft->drawXBitmap(x, y, switch_bg_on_bits, 22, 20, SCREEN_FGCOLOR);  
+    tft->drawXBitmap(x+20, y, switch_btn_bits, 20, 20, color); // 20+20 = 40px width
   }
   else  {
-    tft->drawXBitmap(x, y, switch_off_bits, 38, 20, SCREEN_RELAYDEACTIVATED);
-    tft->drawXBitmap(x, y, switch_bg_off_bits, 38, 20, SCREEN_FGCOLOR);  
+    tft->drawXBitmap(x+18, y, switch_bg_off_bits, 22, 20, SCREEN_FGCOLOR); // 18+22 = 40px width
+    tft->drawXBitmap(x, y, switch_btn_bits, 20, 20, SCREEN_RELAYDEACTIVATED);
   }
 }
 

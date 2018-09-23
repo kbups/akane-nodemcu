@@ -2,12 +2,18 @@
 #define _AKANE_SETTINGSH_
 
 #include <Arduino.h>
+#include <ArduinoJson.h>
+#include "FS.h"
 
 #define DEBUG_AKANE 1
+
 #define ESP8266_PORT 80
 
 #define SERIAL_SPEED 115200
 #define UNSIGNED_LONG_MAX 4294967295
+
+// MQTT
+#define MQTT_PORT 1883
 
 // SENSORS
 #define AM2301_PIN 2    // GPIO2 / D4
@@ -26,8 +32,8 @@
 #define MIN_FAN_CHANGE_DELAY 3000
 
 // SCREEN
-#define TFT_DC 15//5 = GPIO5 = D1, 15 = GPIO15 = D8 
-#define TFT_CS 16//1//4 = GPIO4 = D2, 16 = GPIO16 = D0
+#define TFT_DC 15 // 5 = GPIO5 = D1, 15 = GPIO15 = D8 
+#define TFT_CS 16 // 4 = GPIO4 = D2, 16 = GPIO16 = D0
 #define TFT_ROTATE 2 // 1 Horizontal (pins on right) / 3 Horizontal (pins on left)
 
 // SERIAL
@@ -43,18 +49,11 @@
 
 class Akane_Settings {
   private:
-    char* ssid;
-    char* ssid_pwd;
-
-    float fan_instruction;
-    float heater_instruction;
-    float hum_instruction;
-
-    /*float temp_delta;
-    float temp_commands[];
-
-    float hum_delta;
-    float hum_commands[];*/
+    String ssid;
+    String ssid_pwd;
+    String hostname;
+    String mqtt_address;
+    
   public:
     static Akane_Settings& getInstance() {
         static Akane_Settings instance; // Guaranteed to be destroyed.
@@ -62,40 +61,121 @@ class Akane_Settings {
         return instance;
     };
     
-    Akane_Settings() { };
-
-    inline void initialize(const char* pssid, const char* pssid_pwd) { 
-      ssid = (char *)pssid;
-      ssid_pwd = (char *)pssid_pwd;
+    Akane_Settings() { 
+      if(hostname == NULL || hostname.length() == 0) {
+        hostname = "Akane";
+      }
     };
     
-    char* get_ssid() { return ssid; };
-    void set_ssid(char* pSsid) { ssid = pSsid; };
+    String get_ssid() { return ssid; };
+    void set_ssid(char* pSsid) { ssid = String(pSsid); };
     
-    char* get_ssid_pwd() { return ssid_pwd; };
-    void set_ssid_pwd(char* pSsid_pwd) { ssid_pwd = pSsid_pwd; };
+    String get_ssid_pwd() { return ssid_pwd; };
+    void set_ssid_pwd(char* pSsid_pwd) { ssid_pwd = String(pSsid_pwd); };
 
-    float get_fan_instruction() { return fan_instruction; };
-    void set_fan_instruction(float pValue) { fan_instruction = pValue; };
+    String get_hostname() { return hostname; };
+    void set_hostname(char* pHostname) { hostname = String(pHostname); };
 
-    float get_heater_instruction() { return heater_instruction; };
-    void set_heater_instruction(float pValue) { heater_instruction = pValue; };
-
-    float get_hum_instruction() { return hum_instruction; };
-    void set_hum_instruction(float pValue) { hum_instruction = pValue; };
+    String get_mqtt_address() { return mqtt_address; };
+    void set_mqtt_address(char* pAddress) { mqtt_address = String(pAddress); };
     
-    inline void load() {
-      set_ssid("Livebox-NFP");
-      set_ssid_pwd("AD5919656EA749C372132E633D");
+    inline bool load() {
+      /*set_ssid("Livebox-NFP"); // TODO
+      set_ssid_pwd("AD5919656EA749C372132E633D"); // TODO
+      set_mqtt_address("192.168.1.50"); // TODO
+      set_hostname("Akane"); // TODO
+save();*/
+      if (!SPIFFS.begin()) {
+        Serial.println("[Akane_Settings] Failed to mount file system");
+        return false;
+      }
+      else {
+        Serial.println("[Akane_Settings] File system has been mounted");
+      }
       
-      set_fan_instruction(22);
-      set_heater_instruction(22);
-      set_hum_instruction(22);//70);
+      File configFile = SPIFFS.open("/config.json", "r");
+      if (!configFile) {
+        Serial.println("[Akane_Settings] Failed to open config file");
+        return false;
+      }
+      
+      size_t size = configFile.size();
+      if (size > 1024) {
+        Serial.println("[Akane_Settings] Config file size is too large");
+        return false;
+      }
+
+      // Allocate a buffer to store contents of the file.
+      std::unique_ptr<char[]> buf(new char[size]);
+
+      // We don't use String here because ArduinoJson library requires the input
+      // buffer to be mutable. If you don't use ArduinoJson, you may as well
+      // use configFile.readString instead.
+      configFile.readBytes(buf.get(), size);
+
+      StaticJsonBuffer<200> jsonBuffer;
+      JsonObject& json = jsonBuffer.parseObject(buf.get());
+
+      if (!json.success()) {
+        Serial.println("[Akane_Settings] Failed to parse config file");
+        return false;
+      }
+
+      const char* sSsid = json["ssid"];
+      set_ssid((char *) sSsid);
+      
+      const char* sSsidPwd = json["ssid_pwd"];
+      set_ssid_pwd((char *) sSsidPwd);
+      
+      const char* sHostname = json["hostname"];
+      set_hostname((char *) sHostname);
+      
+      const char* sMqttAddress = json["mqtt_address"];
+      set_mqtt_address((char *) sMqttAddress);
+
+      Serial.println("[Akane_Settings] Read data from config file:");
+      Serial.println("[Akane_Settings] SSIS:         " + get_ssid());
+      Serial.println("[Akane_Settings] SSIS_PWD:     " + get_ssid_pwd());
+      Serial.println("[Akane_Settings] HOSTNAME:     " + get_hostname());
+      Serial.println("[Akane_Settings] MQTT ADDRESS: " + get_mqtt_address());
+      
+      return true;
     };
-    inline void save() { };
+    inline bool save() { 
+      if (!SPIFFS.begin()) {
+        Serial.println("[Akane_Settings] Failed to mount file system");
+        return false;
+      }
+      else {
+        Serial.println("[Akane_Settings] File system has been mounted");
+      }
+      
+      StaticJsonBuffer<200> jsonBuffer;
+      JsonObject& json = jsonBuffer.createObject();
+      json["ssid"]         = get_ssid();
+      json["ssid_pwd"]     = get_ssid_pwd();
+      json["hostname"]     = get_hostname();
+      json["mqtt_address"] = get_mqtt_address();
+
+      File configFile = SPIFFS.open("/config.json", "w");
+      if (!configFile) {
+        Serial.println("[Akane_Settings] Failed to open config file for writing");
+        return false;
+      }
+      
+      json.printTo(configFile);
+
+      Serial.println("[Akane_Settings] Successfully save this data to config file:");
+      Serial.println("[Akane_Settings] SSIS:         " + get_ssid());
+      Serial.println("[Akane_Settings] SSIS_PWD:     " + get_ssid_pwd());
+      Serial.println("[Akane_Settings] HOSTNAME:     " + get_hostname());
+      Serial.println("[Akane_Settings] MQTT ADDRESS: " + get_mqtt_address());
+      
+      return true;  
+    };
     
   private:
-    Akane_Settings(Akane_Settings const&);   // Don't Implement
+    Akane_Settings(Akane_Settings const&); // Don't Implement
     void operator=(Akane_Settings const&); // Don't implement
 };
 

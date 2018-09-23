@@ -17,5 +17,4 @@ public:
        T data;
 };
 
-
 #endif /* NODE_H_ */

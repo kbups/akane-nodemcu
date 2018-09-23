@@ -25,24 +25,24 @@ class Akane_Observer_DateTime : public Observer<Akane_Sensor> {
         Akane_Logger::log("[Akane_Observer_DateTime][update] Receive value is: " + String(res));
 
         if(res) {
-          short hour = res.Hour();
+          short hour   = res.Hour();
           short minute = res.Minute();
           short second = res.Second();
           Akane_Screen::getInstance().update_time(hour, minute, second, prev_hour, prev_minute, prev_second);
 
-          prev_hour = hour;
+          prev_hour   = hour;
           prev_minute = minute;
           prev_second = second;
 
-          short year = res.Year();
+          short year  = res.Year();
           short month = res.Month();
-          short day = res.Day();
+          short day   = res.Day();
 
           Akane_Screen::getInstance().update_date(year, month, day, prev_year, prev_month, prev_day);
 
-          prev_year = year;
+          prev_year  = year;
           prev_month = month;
-          prev_day = day;
+          prev_day   = day;
         }
       }
       else {
